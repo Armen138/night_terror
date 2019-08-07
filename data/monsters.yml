@@ -1,0 +1,19 @@
+- name: rat
+  description: It's a rat. It does not look healthy.
+  # damage before it goes splat
+  health: 1
+  # damage it deals on successful attack
+  damage: 1
+  # turns it takes to reach the player
+  speed: 3
+  drops: 
+    - rat tail
+    - coin
+- name: Ancient Zombie
+  description: More bones than flesh, this zombie had obviously spent some time under ground before coming back to ruin your day.
+  health: 5
+  damage: 4
+  speed: 2
+  drops:
+    - thigh bone
+    - leather boots

@@ -1,0 +1,17 @@
+{
+  "name": "night_terror",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "js-yaml": "^3.13.1",
+    "vorpal": "^1.12.0"
+  }
+}

@@ -1,0 +1,72 @@
+# Prevalence keys:  common, uncommon, rare, very rare, unique
+# Colors:           green,  yellow,   cyan, magenta,   white
+# Drop Chances:     60%,    40%,      20%,  10%,       1%
+
+# Optional keys: 
+# health: restores this amount when eaten
+# damage: does this amount of damage when equiped
+# durability: will last this many uses or attacks
+# equip: which equip slot to use
+# static: true if this object can't be added to an inventory
+- name: rusty nail
+  prevalence: uncommon
+  description: Standard issue rusty nail, probably causes tetanus. Better handle with care.
+- name: baseball bat
+  prevalence: rare
+  damage: 2
+  durability: 10
+  description: Most problems can be solved with a generous dose of blunt force trauma. And this is just the instrument to deliver it.
+  equip: rightHand
+- name: wooden club
+  prevalence: common
+  durability: 4
+  damage: 1
+  description: It's a crude weapon, but it does the job.
+  equip: rightHand
+- name: newspaper
+  prevalence: common
+  durability: 1
+  damage: 1
+  description: Contains the latest news. And a weather forecast.
+  equip: rightHand
+- name: orange
+  prevalence: uncommon
+  health: 2
+  description: It looks ripe.
+- name: tape
+  description: Sticky stuff.
+  prevalence: common
+  durability: 1
+- name: wood
+  description: A sturdy looking length of wood, could come in handy.
+  prevalence: common
+  durability: 1
+- name: frying pan
+  prevalence: unique
+  description: It sits in the sink, unwashed since its last omelette. A weapon with a breakfast aroma.
+  damage: 4
+  equip: rightHand
+  durability: 50
+  reacts with: egg
+  effect: &omelette
+    removes: egg
+    adds: omelette
+    prints: You give the pan a quick rinse before frying an omelette. It looks tasty.
+- name: omelette
+  prevalence: unique
+  description: Freshly fried, beaten egg. Yum!
+  health: 6
+- name: egg
+  prevalence: common
+  description: It looks fresh.
+  reacts with: frying pan
+  effect: *omelette
+- name: locked door
+  prevalence: static
+  description: It is definitely locked. There is a faint scratching noise coming from the other side.
+  reacts with: rusty nail
+  static: true
+  effect:
+    connects: kitchen
+    removes: locked door
+    prints: The rusty nail is a crude tool, but after a while you manage to pick the lock. It looks like the door leads to a kitchen.

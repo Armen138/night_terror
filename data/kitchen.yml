@@ -1,0 +1,9 @@
+title: A messy kitchen
+description: It's a kitchen, and the dishes are left unwashed in the sink.
+name: kitchen
+items: 
+  - frying pan
+  - egg
+connects:
+  - dark hallway
+  - back yard

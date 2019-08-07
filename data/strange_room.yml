@@ -1,0 +1,13 @@
+title: A rough night
+description: >
+  You wake up in a strange room. There is a portait on hanging on the wall, it looks like a happy family. They don't look familiar.
+
+  There is table in the center of the room, on it is a fruit bowl with a single orange in it. It looks ripe.
+  
+  A door that looks like it leads outside is clumsily barricaded with scraps of wood and rusty nails. One of the nails has fallen on the floor.
+name: strange room
+items: 
+  - rusty nail
+  - orange
+connects:
+  - dark hallway

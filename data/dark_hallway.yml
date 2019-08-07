@@ -1,0 +1,10 @@
+title: When your eyes adjust to the dim light
+description: You see something moving in the far corner. It looks like it is coming toward you.
+name: dark hallway
+monsters:
+  - rat
+items: 
+  - baseball bat
+  - locked door
+connects:
+  - strange room
