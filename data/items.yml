@@ -8,6 +8,7 @@
 # durability: will last this many uses or attacks
 # equip: which equip slot to use
 # static: true if this object can't be added to an inventory
+# consumable: can be "used" from inventory without another item to react with
 - name: rusty nail
   prevalence: uncommon
   description: Standard issue rusty nail, probably causes tetanus. Better handle with care.
@@ -70,3 +71,10 @@
     connects: kitchen
     removes: locked door
     prints: The rusty nail is a crude tool, but after a while you manage to pick the lock. It looks like the door leads to a kitchen.
+- name: backpack
+  prevalence: uncommon
+  consumable: true
+  effect:
+    removes: backpack
+    grow_inventory: 4
+    prints: You can now store 4 more items!

@@ -21,6 +21,35 @@ let healthScale = [
 let Game = () => {
 
     let game = Vorpal();
+    game.applyEffects = function (worldItem, itemName) {
+        if(worldItem.effect.connects) {
+            world.location.connects.push(worldItem.effect.connects);
+        }
+        if(worldItem.effect.removes) {
+            if(worldItem.effect.removes === itemName) {
+                // remove item from inventory
+                let removeItem = character.inventory.indexOf(worldItem.effect.removes);
+                if(removeItem !== -1) {
+                    character.inventory.splice(removeItem, 1);
+                }    
+            } else {
+                // remove item from world
+                let removeItem = world.location.items.indexOf(worldItem.effect.removes);
+                if(removeItem !== -1) {
+                    world.location.items.splice(removeItem, 1);
+                }    
+            }
+        }
+        if(worldItem.effect.adds) {
+            world.location.items.push(worldItem.effect.adds);
+        }
+        if(worldItem.effect.grow_inventory) {
+            character.inventorySlots += worldItem.effect.grow_inventory;
+        }                    
+        if(worldItem.effect.prints) {
+            game.log(worldItem.effect.prints);
+        }        
+    }
     game.look = function() {
         if(world.location.title) {
             this.log(chalk.white.bold(world.location.title));
@@ -116,36 +145,19 @@ let Game = () => {
             this.log(chalk.red(errors.notininventory()));
             used = true; 
         } else {
-            for(let worldItemName of world.location.items) {
-                let worldItem = items.get(worldItemName);
-                if(worldItem["reacts with"] && worldItem["reacts with"].indexOf(itemName) !== -1) {
-                    if(worldItem.effect.connects) {
-                        world.location.connects.push(worldItem.effect.connects);
+            let inventoryItem = items.get(itemName);
+            if(inventoryItem.consumable) {
+                game.applyEffects(inventoryItem, itemName);
+                used = true;
+            } else {
+                for(let worldItemName of world.location.items) {
+                    let worldItem = items.get(worldItemName);
+                    if(worldItem["reacts with"] && worldItem["reacts with"].indexOf(itemName) !== -1) {
+                        game.applyEffects(worldItem, itemName);
+                        used = true;
+                        break;
                     }
-                    if(worldItem.effect.removes) {
-                        if(worldItem.effect.removes === itemName) {
-                            // remove item from inventory
-                            let removeItem = character.inventory.indexOf(worldItem.effect.removes);
-                            if(removeItem !== -1) {
-                                character.inventory.splice(removeItem, 1);
-                            }    
-                        } else {
-                            // remove item from world
-                            let removeItem = world.location.items.indexOf(worldItem.effect.removes);
-                            if(removeItem !== -1) {
-                                world.location.items.splice(removeItem, 1);
-                            }    
-                        }
-                    }
-                    if(worldItem.effect.adds) {
-                        world.location.items.push(worldItem.effect.adds);
-                    }
-                    if(worldItem.effect.prints) {
-                        this.log(worldItem.effect.prints);
-                    }
-                    used = true;
-                    break;
-                }
+                }    
             }
         }
         if(!used) {

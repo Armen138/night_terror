@@ -2,7 +2,9 @@ const yaml = require('js-yaml');
 const fs = require('fs');
 const banner = require('./banner');
 const errors = require('./errors');
-const items = require('./items');
+const Items = require('./items');
+
+const items = new Items();
 
 class World {
     constructor() {
@@ -24,7 +26,8 @@ class World {
         if(idx == -1) {
             return { error: errors.notfound() };
         }
-        if(this.location.items[idx].static) {
+        let worldItem = items.get(this.location.items[idx]);
+        if(worldItem.static) {
             return { error: errors.staticitem() };
         }
         return { item: this.location.items.splice(idx, 1)[0] };
