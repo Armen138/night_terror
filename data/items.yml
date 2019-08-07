@@ -49,7 +49,7 @@
   equip: rightHand
   durability: 50
   reacts with: egg
-  effect: &omelette
+  effect: &make_omelette
     removes: egg
     adds: omelette
     prints: You give the pan a quick rinse before frying an omelette. It looks tasty.
@@ -61,7 +61,26 @@
   prevalence: common
   description: It looks fresh.
   reacts with: frying pan
-  effect: *omelette
+  effect: *make_omelette
+- name: rat tail
+  prevalence: common
+  description: Looks like some violence was involved in detaching this.
+- name: coin
+  prevalence: common
+  description: A shiny coin. Could it still be worth something?
+- name: candy bar
+  prevalence: uncommon
+  health: 1
+  description: Not a brand you've ever heard of, the picture on the wrapping looks like wafers with caramel covered in chocolate.
+- name: vending machine
+  static: true
+  prevalence: static
+  reacts with: coin
+  description: The vending machine looks well stocked with candy bars. Not terribly healthy, but they will do in a pinch.
+  effect: &buy_candybar
+    adds: candy bar
+    removes: coin
+    prints: After a few clicks and clunks, a candy bar drops into the recepticle.
 - name: locked door
   prevalence: static
   description: It is definitely locked. There is a faint scratching noise coming from the other side.

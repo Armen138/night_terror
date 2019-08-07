@@ -3,12 +3,15 @@ const fs = require('fs');
 const banner = require('./banner');
 const errors = require('./errors');
 const Items = require('./items');
+const Monsters = require('./monsters');
+const Monster = require('./monster');
 
 const items = new Items();
+const monsters = new Monsters();
 
 class World {
     constructor() {
-        this.location = yaml.safeLoad(fs.readFileSync(`data/strange_room.yml`, 'utf8'));
+        this.location = yaml.safeLoad(fs.readFileSync(`data/locations/strange_room.yml`, 'utf8'));
     }
     go(location) {
         let promise = new Promise((resolve, reject) => {
@@ -35,7 +38,10 @@ class World {
     loadLocation(location) {
         let promise = new Promise((resolve, reject) => {
             try {
-                let data = yaml.safeLoad(fs.readFileSync(`data/${location.replace(/ /g, '_')}.yml`, 'utf8'));
+                let data = yaml.safeLoad(fs.readFileSync(`data/locations/${location.replace(/ /g, '_')}.yml`, 'utf8'));
+                if(data.monsters) {
+                    data.monsters = data.monsters.map(monster => new Monster(monsters.get(monster)))
+                }
                 resolve(data);
             } catch (e) {
                 reject(e);

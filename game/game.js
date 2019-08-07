@@ -4,6 +4,7 @@ const errors = require('./errors');
 
 const World = require('./world');
 const Character = require('./character');
+const Monster = require('./monster');
 const Items = require('./items');
 
 let world = new World();
@@ -59,6 +60,10 @@ let Game = () => {
             let worldItems = world.location.items.map(itemName => items.render(itemName));
             this.log(`Items here:\n${worldItems.join('\n')}`);
         }
+        if(world.location.monsters && world.location.monsters.length > 0) {
+            let monsters = world.location.monsters; //.map(monsterConfig => new Monster(monsterConfig));
+            this.log(`Monsters here:\n${monsters.map(monster => monster.name).join('\n')}`);
+        }        
         if(world.location.connects) {
             this.log(`This place connects to:\n${world.location.connects.join('\n')}`);
         }
@@ -204,7 +209,30 @@ let Game = () => {
             }
             callback();
         });
-    
+    game.command('attack <monster...>', 'Attack a nearby monster')
+        .autocomplete(() => world.location.monsters.map(monster => monster.name))
+        .action(function (args, callback) {
+            let monster = args.monster.join(" ");
+            let monsterIdx = world.location.monsters.map(monster => monster.name).indexOf(monster);
+            if (monsterIdx !== -1) {
+                let damage = character.attack();
+                this.log(damage.message);
+                let status = world.location.monsters[monsterIdx].defend(damage);
+                this.log(status.message);
+                if(status.status === "death") {
+                    world.location.monsters.splice(monsterIdx, 1);
+                    if(status.drops && status.drops.length > 0) {
+                        world.location.items = world.location.items.concat(status.drops);
+                        for(let drop of status.drops) {
+                            this.log(`It dropped ${items.render(drop)}`);
+                        }
+                    }
+                }
+            } else {
+                this.log(chalk.red(errors.notfound()));
+            }
+            callback();
+        });    
     // game.help(cmd => {
     //     return "HALP";
     // });
