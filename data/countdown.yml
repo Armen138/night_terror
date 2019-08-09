@@ -1,0 +1,17 @@
+# Each action triggers one of these messages. When the last message is reached,
+# the player loses. There should be 60 messages, each representing a minute of game-time
+# The number of ticks (60) may need to be tweaked for balance.
+- You can hear a faint scratching outside. A branch, moved by the wind, perhaps.
+- Somewhere in the distance you can hear the wind whistling through an open window. 
+- You can feel a draft. It is unclear where it is coming from.
+- You know it was the wind, but for a moment you could have sworn it whispered your name.
+- You feel like you could hear secrets, travelling between the walls, if you concentrate on the whispers.
+- Just for a second, the cracks in the wall looked like a face, grinning. It's gone now, you probably imagined it.
+- When you close your eyes, just for a second, you see teeth. Lots and lots of teeth.
+- The portrait on the wall... it seems to stare straight into your soul.
+- A wolf howls in the distance. In the distance, such a vague term. Perhaps it isn't that far, after all.
+- Somewhere in the house, a door just closed. That draft again, probably.
+- A screech, from above. You wonder if it might be bats in the attic.
+- You hear your name, whispered as if by a person standing directly behind you. But when you turn around, no one's there.
+- "I'm imagining things", you tell yourself. "No", the answer comes.
+- Suddenly, you have a strong sense of impending doom. You stare straight ahead, for fear of what you might see if you turn around.

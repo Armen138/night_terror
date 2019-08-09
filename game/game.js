@@ -7,7 +7,9 @@ const Character = require('./character');
 const Monster = require('./monster');
 const Items = require('./items');
 
-let world = new World();
+const worldConfig = yaml.safeLoad(fs.readFileSync(`data/world.yml`, 'utf8'));
+
+let world = new World(worldConfig);
 let character = new Character();
 let items = new Items();
 
@@ -22,6 +24,11 @@ let healthScale = [
 let Game = () => {
 
     let game = Vorpal();
+    game.time = 0;
+    game.advance = function() {
+        game.time++;
+        console.log(`game time: ${game.time}`)
+    }
     game.applyEffects = function (worldItem, itemName) {
         if(worldItem.effect.connects) {
             world.location.connects.push(worldItem.effect.connects);
@@ -109,6 +116,7 @@ let Game = () => {
                 process.stdout.write ("\u001B[2J\u001B[0;0f");
                 this.delimiter(`[${chalk.yellow(data.name)}]$`);
                 game.look.call(this);
+                game.advance();
                 callback();
             });
         });
@@ -119,6 +127,7 @@ let Game = () => {
             let item = args.item.join(" ");
             character.take(world, item).then(message => {
                 this.log(message);
+                game.advance();
             }).catch(error => {
                 this.log(chalk.red(error));
             });
@@ -136,6 +145,7 @@ let Game = () => {
                 world.location.items.push(itemName);
                 character.inventory.splice(inventorySlot, 1);
                 this.log(`You drop the ${itemName}.`);
+                game.advance();
             }
             callback();
         });
@@ -167,6 +177,8 @@ let Game = () => {
         }
         if(!used) {
             this.log(chalk.red(errors.cantuse()));
+        } else {
+            game.advance();
         }
         callback();
     });
@@ -192,6 +204,7 @@ let Game = () => {
                     let color = (healthScale.length / character.maxHealth * character.health | 0) - 1;
                     let health = chalk[healthScale[color]](`${character.health}/${character.maxHealth}`);
                     this.log(`You ate the ${items.render(itemName)}. Your health is now ${health}`);
+                    game.advance();
                 }
             }
             callback();
@@ -204,6 +217,7 @@ let Game = () => {
             let allItems = character.inventory.concat(world.location.items);
             if (allItems.indexOf(item) !== -1) {
                 this.log(items.get(item).description);
+                game.advance();
             } else {
                 this.log(chalk.red(errors.notfound()));
             }
@@ -228,6 +242,7 @@ let Game = () => {
                         }
                     }
                 }
+                game.advance();
             } else {
                 this.log(chalk.red(errors.notfound()));
             }
