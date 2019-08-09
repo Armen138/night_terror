@@ -66,7 +66,6 @@ class Character {
     die() {
         return {
             message: 'Ah, so this is it... this is where the adventure ends. We had a good run though, didn\'t we?',
-            drops: this.drop(),
             status: "death"
         }
     }

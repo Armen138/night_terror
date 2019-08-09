@@ -30,12 +30,27 @@ let Game = () => {
     game.time = 0;
     game.advance = function() {
         game.time++;
+        if(world.location.monsters && world.location.monsters.length > 0) {
+            for(let monster of world.location.monsters) {
+                let damage = monster.attack();
+                console.log(damage.message);
+                let status = character.defend(damage);
+                console.log(status.message);
+                if(status.status === "death") {
+                    game.over();
+                }
+            }
+        }
         if(countdown.length > 0) {
             let message = countdown.shift();
             console.log(chalk.grey(message));    
         } else {
-            console.log("Game over. You ded.");
+            game.over();
         }
+        game.delimiter(`[${chalk.red("❤︎".repeat(character.health))}][${world.location.name}]$`)
+    }
+    game.over = function() {
+        console.log("Game over. You ded.");
     }
     game.applyEffects = function (worldItem, itemName) {
         if(worldItem.effect.connects) {
@@ -122,7 +137,8 @@ let Game = () => {
             let place = args.place.join(" ");
             world.go(place).then(data => {
                 process.stdout.write ("\u001B[2J\u001B[0;0f");
-                this.delimiter(`[${chalk.yellow(data.name)}]$`);
+                // this.delimiter(`[${chalk.yellow(data.name)}]$`);
+                game.delimiter(`[${chalk.red("❤︎".repeat(character.health))}][${world.location.name}]$`)
                 game.look.call(this);
                 // not sure if moving locations should advance the game,
                 // since the location itself has a lot of text attached already.
@@ -262,7 +278,7 @@ let Game = () => {
     // game.help(cmd => {
     //     return "HALP";
     // });
-    game.delimiter(`[${world.location.name}]$`)
+    game.delimiter(`[${chalk.red("❤︎".repeat(character.health))}][${world.location.name}]$`)
 
     return game;
 }
