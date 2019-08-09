@@ -37,6 +37,11 @@ const errors = {
         "You can't do that.",
         "No way, dude."
     ],
+    _slot_used: [
+        "You already have an item equipped for that slot",
+        "You can't equip more items of that type",
+        "That won't fit, try unequipping an item first."
+    ],
     random_error(list) {
         let idx = Math.floor(Math.random() * list.length);
         return list[idx];
@@ -58,7 +63,10 @@ const errors = {
     },
     cantuse() {
         return errors.random_error(errors._cant_use);
-    }
+    },
+    slotused() {
+        return errors.random_error(errors._slot_used);
+    }    
 }
 
 module.exports = errors;

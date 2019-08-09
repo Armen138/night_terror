@@ -17,6 +17,9 @@ class Character {
             neck: null,             // amulets and charms
         }
     }
+    get equipped() {
+        return Object.values(this.equipment).filter(item => item !== null).map(item => item.name);
+    }
     get armor() {
         let armor = 0;
         for(let equipSlot in this.equipment) {
