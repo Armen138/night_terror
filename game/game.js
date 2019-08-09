@@ -1,7 +1,8 @@
 const Vorpal = require('vorpal');
 const chalk = require('chalk');
 const errors = require('./errors');
-
+const yaml = require('js-yaml');
+const fs = require('fs');
 const World = require('./world');
 const Character = require('./character');
 const Monster = require('./monster');
@@ -24,10 +25,17 @@ let healthScale = [
 let Game = () => {
 
     let game = Vorpal();
+    let countdown = yaml.safeLoad(fs.readFileSync(`data/countdown.yml`, 'utf8'));
+
     game.time = 0;
     game.advance = function() {
         game.time++;
-        console.log(`game time: ${game.time}`)
+        if(countdown.length > 0) {
+            let message = countdown.shift();
+            console.log(chalk.grey(message));    
+        } else {
+            console.log("Game over. You ded.");
+        }
     }
     game.applyEffects = function (worldItem, itemName) {
         if(worldItem.effect.connects) {
@@ -116,7 +124,9 @@ let Game = () => {
                 process.stdout.write ("\u001B[2J\u001B[0;0f");
                 this.delimiter(`[${chalk.yellow(data.name)}]$`);
                 game.look.call(this);
-                game.advance();
+                // not sure if moving locations should advance the game,
+                // since the location itself has a lot of text attached already.
+                // game.advance();
                 callback();
             });
         });
@@ -128,10 +138,11 @@ let Game = () => {
             character.take(world, item).then(message => {
                 this.log(message);
                 game.advance();
+                callback();
             }).catch(error => {
                 this.log(chalk.red(error));
+                callback();
             });
-            callback();
         });
 
     game.command('drop <item...>', 'Drop an item')
