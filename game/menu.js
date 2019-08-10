@@ -5,6 +5,7 @@ const titles = require('./titles');
 
 let Menu = (game) => {
     let menu = Vorpal();
+    menu.history("menu-command-history");
 
     menu.delimiter("[menu]$");
     menu.command('play', 'Play ' + chalk.red('Night Terror'))
@@ -24,6 +25,7 @@ let Menu = (game) => {
         });
     menu.command('load', 'Load game')
         .action(function (args, callback) {
+            menu.hide();
             game.show();
             callback();
         });

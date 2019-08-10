@@ -25,6 +25,7 @@ let healthScale = [
 let Game = () => {
 
     let game = Vorpal();
+    game.history("game-command-history");
     let countdown = yaml.safeLoad(fs.readFileSync(`data/countdown.yml`, 'utf8'));
 
     game.time = 0;
@@ -47,7 +48,7 @@ let Game = () => {
         } else {
             game.over();
         }
-        game.delimiter(`[${chalk.red("❤︎".repeat(character.health))}][${world.location.name}]$`)
+        game.delimiter(`[${chalk.red("❤".repeat(character.health))}][${world.location.name}]$`)
     }
     game.over = function () {
         console.log("Game over. You ded.");
@@ -102,6 +103,7 @@ let Game = () => {
         .action(function (args, callback) {
             process.stdout.write("\u001B[2J\u001B[0;0f");
             this.log(game.menu.intro);
+            game.hide();
             game.menu.show();
             callback();
         });
@@ -345,7 +347,7 @@ let Game = () => {
     // game.help(cmd => {
     //     return "HALP";
     // });
-    game.delimiter(`[${chalk.red("❤︎".repeat(character.health))}][${world.location.name}]$`)
+    game.delimiter(`[${chalk.red("❤".repeat(character.health))}][${world.location.name}]$`)
 
     return game;
 }
