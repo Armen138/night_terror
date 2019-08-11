@@ -1,8 +1,9 @@
 /* eslint-disable arrow-parens */
 /* eslint-disable import/extensions */
 /* eslint-disable no-restricted-syntax */
-import errors from './errors.js';
+import Messages from './messages.js';
 
+const messages = new Messages('data/messages.yml');
 class Character {
   constructor() {
     this.inventory = [];
@@ -56,7 +57,7 @@ class Character {
           resolve(`You have added ${item} to your inventory.`);
         }
       } else {
-        reject(errors.inventoryfull());
+        reject(messages.inventory_full);
       }
     });
     return promise;

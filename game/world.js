@@ -1,13 +1,14 @@
 /* eslint-disable import/extensions */
 import fs from 'fs';
 import yaml from 'js-yaml';
-import errors from './errors.js';
+import Messages from './messages.js';
 import Monsters from './monsters.js';
 import Monster from './monster.js';
 import Items from './items.js';
 
 const items = new Items();
 const monsters = new Monsters();
+const messages = new Messages('data/messages.yml');
 
 class World {
   constructor(config) {
@@ -30,11 +31,11 @@ class World {
   take(item) {
     const idx = this.location.items.indexOf(item);
     if (idx === -1) {
-      return { error: errors.notfound() };
+      return { error: messages.not_found };
     }
     const worldItem = items.get(this.location.items[idx]);
     if (worldItem.static) {
-      return { error: errors.staticitem() };
+      return { error: messages.static_item };
     }
     return { item: this.location.items.splice(idx, 1)[0] };
   }

@@ -1,0 +1,38 @@
+cant_use:
+  - You can't use that here.
+  - There's nothing here to use that with.
+  - You can't do that.
+  - No way, dude.
+inventory_full:
+  - You don't have space to carry more items!
+  - No pockets left to stuff that into.
+  - No can do, buckaroo. No space!
+  - You need more pockets!
+  - Your inventory is full. Drop stuff to make space!
+not_edible:
+  - You don't have space to carry more items!
+  - No pockets left to stuff that into.
+  - No can do, buckaroo. No space!
+  - You need more pockets!
+  - Your inventory is full. Drop stuff to make space!
+not_found:
+  - This item doesn't appear to be around here.
+  - You look around for a bit, but can't find that anywhere.
+  - You want WHAT?
+  - Are you sure you saw that here?
+not_in_inventory:
+  - This item doesn't appear to be around here.
+  - You look around for a bit, but can't find that anywhere.
+  - You want WHAT?
+  - Are you sure you saw that here?
+slot_used:
+  - You already have an item equipped for that slot.
+  - You can't equip more items of that type.
+  - That won't fit, try unequipping an item first.
+static_item:
+  - You can't take that.
+  - You try to move it, but it won't budge.
+  - Looks like it's stuck.
+  - But... how??
+  - That won't work.
+  - Hmm.... looks heavy, better leave that where it is.

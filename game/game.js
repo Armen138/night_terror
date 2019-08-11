@@ -6,16 +6,16 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import * as vorpal from 'vorpal';
 import chalk from 'chalk';
-import errors from './errors.js';
+import Messages from './messages.js';
 import World from './world.js';
 import Character from './character.js';
-// import Monster from './monster';
 import Items from './items.js';
 
 const worldConfig = yaml.safeLoad(fs.readFileSync('data/world.yml', 'utf8'));
 
 const world = new World(worldConfig);
 const character = new Character();
+const messages = new Messages('data/messages.yml');
 const items = new Items();
 
 
@@ -176,7 +176,7 @@ const Game = () => {
       const itemName = args.item.join(' ');
       const inventorySlot = character.inventory.indexOf(itemName);
       if (inventorySlot === -1) {
-        game.log(chalk.red(errors.notininventory()));
+        game.log(chalk.red(messages.not_in_inventory));
       } else {
         world.location.items.push(itemName);
         character.inventory.splice(inventorySlot, 1);
@@ -206,7 +206,7 @@ const Game = () => {
         }
       }
       if (!used) {
-        game.log(chalk.red(errors.cantuse()));
+        game.log(chalk.red(messages.cant_use));
       } else {
         game.advance();
       }
@@ -221,7 +221,7 @@ const Game = () => {
       const itemName = args.item.join(' ');
       const inventorySlot = character.inventory.indexOf(itemName);
       if (inventorySlot === -1) {
-        game.log(chalk.red(errors.notininventory()));
+        game.log(chalk.red(messages.not_in_inventory));
         used = true;
       } else {
         const inventoryItem = items.get(itemName);
@@ -232,12 +232,12 @@ const Game = () => {
           game.log(`You've equipped ${itemName} in the ${equipmentSlot} slot`);
           used = true;
         } else {
-          game.log(chalk.red(errors.slotused()));
+          game.log(chalk.red(messages.slot_used));
           used = true;
         }
       }
       if (!used) {
-        game.log(chalk.red(errors.cantuse()));
+        game.log(chalk.red(messages.cant_use));
       } else {
         game.advance();
       }
@@ -251,7 +251,7 @@ const Game = () => {
       const itemName = args.item.join(' ');
       const inventorySlot = character.inventory.indexOf(itemName);
       if (inventorySlot === -1) {
-        game.log(chalk.red(errors.notininventory()));
+        game.log(chalk.red(messages.not_in_inventory));
         used = true;
       } else {
         const inventoryItem = items.get(itemName);
@@ -270,7 +270,7 @@ const Game = () => {
         }
       }
       if (!used) {
-        game.log(chalk.red(errors.cantuse()));
+        game.log(chalk.red(messages.cant_use));
       } else {
         game.advance();
       }
@@ -284,11 +284,11 @@ const Game = () => {
       const itemName = args.item.join(' ');
       const inventorySlot = character.inventory.indexOf(itemName);
       if (inventorySlot === -1) {
-        game.log(chalk.red(errors.notininventory()));
+        game.log(chalk.red(messages.not_in_inventory));
       } else {
         const item = items.get(itemName);
         if (!item.health) {
-          game.log(chalk.red(errors.notedible()));
+          game.log(chalk.red(messages.not_edible));
         } else {
           character.health += item.health;
           if (character.health > character.maxHealth) {
@@ -322,7 +322,7 @@ const Game = () => {
         game.log(items.get(item).description);
         game.advance();
       } else {
-        game.log(chalk.red(errors.notfound()));
+        game.log(chalk.red(messages.not_found));
       }
       callback();
     });
@@ -347,7 +347,7 @@ const Game = () => {
         }
         game.advance();
       } else {
-        game.log(chalk.red(errors.notfound()));
+        game.log(chalk.red(messages.not_found));
       }
       callback();
     });
