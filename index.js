@@ -1,9 +1,9 @@
-const Menu = require('./game/menu');
-const Game = require('./game/game');
+/* eslint-disable import/extensions */
+import Game from './game/game.js';
+import Menu from './game/menu.js';
 
-let game = Game();
-let menu = Menu(game);
-
+const game = Game();
+const menu = Menu(game);
 game.menu = menu;
-console.log(menu.intro);
+menu.log(menu.intro);
 menu.show();

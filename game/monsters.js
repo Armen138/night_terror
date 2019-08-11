@@ -1,19 +1,21 @@
-const fs = require('fs');
-const yaml = require('js-yaml');
-const chalk = require('chalk');
+/* eslint-disable no-restricted-syntax */
+import fs from 'fs';
+import yaml from 'js-yaml';
+// import chalk from 'chalk';
 
 class Monsters {
-    constructor() {
-        this.data = yaml.safeLoad(fs.readFileSync(`data/monsters.yml`, 'utf8'));
+  constructor() {
+    this.data = yaml.safeLoad(fs.readFileSync('data/monsters.yml', 'utf8'));
+  }
+
+  get(name) {
+    for (const monster of this.data) {
+      if (monster.name === name) {
+        return monster;
+      }
     }
-    get(name) {
-        for(let monster of this.data) {
-            if(monster.name == name) {
-                return monster;
-            }
-        }
-        return null;
-    }
+    return null;
+  }
 }
 
-module.exports = Monsters;
+export default Monsters;

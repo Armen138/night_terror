@@ -1,8 +1,10 @@
-const chalk = require('chalk');
-const titles = require('./titles');
+/* eslint-disable import/extensions */
+/* eslint-disable no-restricted-syntax */
+import chalk from 'chalk';
+import titles from './titles.js';
 
 const banner = {
-    text: `@@@  @@@  @@@   @@@@@@@@  @@@  @@@  @@@@@@@     @@@@@@@  @@@@@@@@  @@@@@@@   @@@@@@@    @@@@@@   @@@@@@@ 
+  text: `@@@  @@@  @@@   @@@@@@@@  @@@  @@@  @@@@@@@     @@@@@@@  @@@@@@@@  @@@@@@@   @@@@@@@    @@@@@@   @@@@@@@ 
 @@@@ @@@  @@@  @@@@@@@@@  @@@  @@@  @@@@@@@     @@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  
 @@!@!@@@  @@!  !@@        @@!  @@@    @@!         @@!    @@!       @@!  @@@  @@!  @@@  @@!  @@@  @@!  @@@  
 !@!!@!@!  !@!  !@!        !@!  @!@    !@!         !@!    !@!       !@!  @!@  !@!  @!@  !@!  @!@  !@!  @!@  
@@ -12,18 +14,18 @@ const banner = {
 :!:  !:!  :!:  :!:   !::  :!:  !:!    :!:         :!:    :!:       :!:  !:!  :!:  !:!  :!:  !:!  :!:  !:!  
  ::   ::   ::   ::: ::::  ::   :::     ::          ::     :: ::::  ::   :::  ::   :::  ::::: ::  ::   :::  
 ::    :   :     :: :: :    :   : :     :           :     : :: ::    :   : :   :   : :   : :  :    :   : :  `,
-    colored: function () {
-        let lines = banner.text.split("\n");
-        let aligned = [];
-        for(let line of lines) {
-            if(line.length < 106) {
-                line += " ".repeat(106 - line.length);
-            }
-            aligned.push(titles.header(line, banner.width));
-        }
-        return chalk.red(aligned.join('\n'));
-    },
-    width: process.stdout.columns //106
+  colored() {
+    const lines = banner.text.split('\n');
+    const aligned = [];
+    for (let line of lines) {
+      if (line.length < 106) {
+        line += ' '.repeat(106 - line.length);
+      }
+      aligned.push(titles.header(line, banner.width));
+    }
+    return chalk.red(aligned.join('\n'));
+  },
+  width: process.stdout.columns, // 106
 };
 
-module.exports = banner;
+export default banner;
