@@ -1,1 +1,32 @@
 spawn: strange room
+prompt: menu
+header: 
+  text: A text-based horror adventure
+  style:
+    color: white
+    background: "#540a00"
+    font-weight: bold
+    text-align: center
+title: 
+  style:
+    color: "#540a00"
+    text-align: center
+  text: "@@@  @@@  @@@   @@@@@@@@  @@@  @@@  @@@@@@@     @@@@@@@  @@@@@@@@  @@@@@@@   @@@@@@@    @@@@@@   @@@@@@@  \n
+@@@@ @@@  @@@  @@@@@@@@@  @@@  @@@  @@@@@@@     @@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  \n
+@@!@!@@@  @@!  !@@        @@!  @@@    @@!         @@!    @@!       @@!  @@@  @@!  @@@  @@!  @@@  @@!  @@@  \n
+!@!!@!@!  !@!  !@!        !@!  @!@    !@!         !@!    !@!       !@!  @!@  !@!  @!@  !@!  @!@  !@!  @!@  \n
+@!@ !!@!  !!@  !@! @!@!@  @!@!@!@!    @!!         @!!    @!!!:!    @!@!!@!   @!@!!@!   @!@  !@!  @!@!!@!   \n
+!@!  !!!  !!!  !!! !!@!!  !!!@!!!!    !!!         !!!    !!!!!:    !!@!@!    !!@!@!    !@!  !!!  !!@!@!    \n
+!!:  !!!  !!:  :!!   !!:  !!:  !!!    !!:         !!:    !!:       !!: :!!   !!: :!!   !!:  !!!  !!: :!!   \n
+:!:  !:!  :!:  :!:   !::  :!:  !:!    :!:         :!:    :!:       :!:  !:!  :!:  !:!  :!:  !:!  :!:  !:!  \n
+ ::   ::   ::   ::: ::::  ::   :::     ::          ::     :: ::::  ::   :::  ::   :::  ::::: ::  ::   :::  \n
+::    :   :     :: :: :    :   : :     :           :     : :: ::    :   : :   :   : :   : :  :    :   : : "
+subtitle:
+  style:
+    color: white
+    background: "#540a00"
+    text-align: center
+  text:
+    - I think I heard something. Did you hear something?
+    - Welcome, unfortunate soul. Make yourself comfortable.
+    - There are things that go GHAWRAWARAAAAGGHHH in the night.

@@ -4,7 +4,7 @@
 /* eslint-disable import/extensions */
 import fs from 'fs';
 import yaml from 'js-yaml';
-import * as vorpal from 'vorpal';
+import Vorpal from 'vorpal';
 import chalk from 'chalk';
 import Messages from './messages.js';
 import World from './world.js';
@@ -26,14 +26,18 @@ const healthScale = [
   'green',
 ];
 
-//  game.log(vorpal);
-const Vorpal = vorpal.default;
-const Game = () => {
-  const game = Vorpal();
+const Game = (renderer) => {
+  const game = renderer.vorpal;
   game.history('game-command-history');
   const countdown = yaml.safeLoad(fs.readFileSync('data/countdown.yml', 'utf8'));
 
   game.time = 0;
+  game.play = () => {
+    renderer.clear();
+    game.look();
+    game.show();
+  };
+
   game.advance = () => {
     game.time += 1;
     if (world.location.monsters && world.location.monsters.length > 0) {
