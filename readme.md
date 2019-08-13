@@ -19,3 +19,11 @@ Run with terminal front end:
 npm install
 npm start
 ```
+
+Run with web-terminal front end:
+
+```
+npm install http-server -g
+npm install
+npm run web
+```

@@ -83,8 +83,9 @@ class TerminalRenderer {
     return value;
   }
 
-  text(text, style) {
-    this.vorpal.log(this.style(text, style));
+  text(text, style, source) {
+    const prefix = source ? this.style(`${source} `, { color: 'magenta' }) : '';
+    this.vorpal.log(prefix + this.style(text, style));
   }
 }
 

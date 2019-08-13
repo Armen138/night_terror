@@ -1,8 +1,8 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-restricted-syntax */
-import Items from './items.js';
+// import Items from './items.js';
 
-const items = new Items();
+// const items = new Items();
 // # Drop Chances:     60%,    40%,      20%,  10%,       1%
 
 const dropChances = {
@@ -21,7 +21,7 @@ const healthStatus = [
 ];
 
 class Monster {
-  constructor(config) {
+  constructor(config, items) {
     // - name: Ancient Zombie
     // description: More bones than flesh, this zombie had obviously spent some time under ground
     // before coming back to ruin your day.
@@ -30,6 +30,7 @@ class Monster {
     // drops:
     //   - thigh bone
     //   - leather boots
+    this.items = items;
     this.name = config.name || 'Monster';
     this.health = config.health || 1;
     this.damage = config.damage || 1;
@@ -40,7 +41,7 @@ class Monster {
   drop() {
     const drops = [];
     for (const itemName of this.drops) {
-      const item = items.get(itemName);
+      const item = this.items.get(itemName);
       const chance = dropChances[item.prevalence];
       const roll = Math.random();
       if (roll <= chance) {

@@ -53,8 +53,8 @@ class Character {
         if (worldItem.error) {
           reject(worldItem.error);
         } else {
-          this.inventory.push(worldItem.item);
-          resolve(`You have added ${item} to your inventory.`);
+          this.inventory.push(item.name);
+          resolve(`You have added ${item.name} to your inventory.`);
         }
       } else {
         reject(messages.inventory_full);

@@ -6,6 +6,7 @@ import World from './world.js';
 import Character from './character.js';
 import Items from './items.js';
 import Events from './events.js';
+// import Monsters from './monsters.js';
 
 const healthScale = [
   'red',
@@ -19,6 +20,8 @@ class Game extends Events {
     super();
     this.time = 0;
     this.renderer = renderer;
+    // this.monsters = new Monsters(loader);
+    this.items = new Items(renderer, loader);
     loader.get('data/world.yml').then(worldConfig => {
       loader.get(`data/locations/${worldConfig.spawn.replace(/ /g, '_')}.yml`).then(location => {
         this.world = new World(location, loader);
@@ -32,7 +35,6 @@ class Game extends Events {
         });
       });
     });
-    this.items = new Items(renderer);
 
     // const worldConfig = yaml.safeLoad(fs.readFileSync('data/world.yml', 'utf8'));
 
@@ -68,7 +70,7 @@ class Game extends Events {
       case 'examine':
         return () => this.character.inventory.concat(this.world.location.items);
       case 'attack':
-        return () => this.world.location.monsters.map(monster => monster.name);
+        return () => this.world.location.spawned.map(monster => monster.name);
       case 'go':
         return () => this.world.location.connects;
       default:
@@ -107,18 +109,18 @@ class Game extends Events {
   }
 
   attack(monster, callback) {
-    const monsterIdx = this.world.location.monsters.map(creature => creature.name).indexOf(monster);
+    const monsterIdx = this.world.location.spawned.map(item => item.name).indexOf(monster);
     if (monsterIdx !== -1) {
       const damage = this.character.attack();
       this.renderer.text(damage.message);
-      const status = this.world.location.monsters[monsterIdx].defend(damage);
-      this.renderer.text(status.message);
+      const status = this.world.location.spawned[monsterIdx].defend(damage);
+      this.renderer.text(status.message, null, monster);
       if (status.status === 'death') {
-        this.world.location.monsters.splice(monsterIdx, 1);
+        this.world.location.spawned.splice(monsterIdx, 1);
         if (status.drops && status.drops.length > 0) {
           this.world.location.items = this.world.location.items.concat(status.drops);
           for (const drop of status.drops) {
-            this.renderer.text(`It dropped ${this.items.render(drop)}`);
+            this.renderer.text(`It dropped ${this.items.render(drop)}`, null, monster);
           }
         }
       }
@@ -242,7 +244,8 @@ class Game extends Events {
     callback();
   }
 
-  take(item, callback) {
+  take(itemName, callback) {
+    const item = this.items.get(itemName);
     this.character.take(this.world, item).then(message => {
       this.renderer.text(message);
       this.advance();
@@ -296,7 +299,7 @@ class Game extends Events {
   examine(item, callback) {
     const allItems = this.character.inventory.concat(this.world.location.items);
     if (allItems.indexOf(item) !== -1) {
-      this.renderer.text(this.items.get(item).description);
+      this.renderer.text(this.items.get(item).description, null, item);
       this.advance();
     } else {
       this.renderer.text(this.messages.not_found, { color: 'red' });
@@ -313,9 +316,9 @@ class Game extends Events {
       const worldItems = this.world.location.items.map(itemName => this.items.render(itemName));
       this.renderer.text(`Items here:\n${worldItems.join('\n')}`);
     }
-    if (this.world.location.monsters && this.world.location.monsters.length > 0) {
-      const { monsters } = this.world.location;
-      this.renderer.text(`Monsters here:\n${monsters.map(monster => monster.name).join('\n')}`);
+    if (this.world.location.spawned && this.world.location.spawned.length > 0) {
+      const { spawned } = this.world.location;
+      this.renderer.text(`Monsters here:\n${spawned.map(item => item.name).join('\n')}`);
     }
     if (this.world.location.connects) {
       this.renderer.text(`This place connects to:\n${this.world.location.connects.join('\n')}`);
@@ -328,11 +331,13 @@ class Game extends Events {
   advance() {
     this.time += 1;
     if (this.world.location.monsters && this.world.location.monsters.length > 0) {
-      for (const monster of this.world.location.monsters) {
+      const monstersHere = this.world.location.spawned;
+
+      for (const monster of monstersHere) {
         const damage = monster.attack();
-        this.renderer.text(damage.message);
+        this.renderer.text(damage.message, null, monster.name);
         const status = this.character.defend(damage);
-        this.renderer.text(status.message);
+        this.renderer.text(status.message, null, 'you');
         if (status.status === 'death') {
           this.emit('death');
         }

@@ -1,6 +1,7 @@
+/* eslint-disable import/extensions */
+/* eslint-disable arrow-parens */
 /* eslint-disable no-restricted-syntax */
-import fs from 'fs';
-import yaml from 'js-yaml';
+import Events from './events.js';
 
 const itemColors = {
   common: 'green',
@@ -11,10 +12,14 @@ const itemColors = {
   static: 'grey',
 };
 
-class Items {
-  constructor(renderer) {
+class Items extends Events {
+  constructor(renderer, loader) {
+    super();
     this.renderer = renderer;
-    this.data = yaml.safeLoad(fs.readFileSync('data/items.yml', 'utf8'));
+    loader.get('data/items.yml').then(data => {
+      this.data = data;
+      this.emit('ready');
+    });
   }
 
   get(itemName) {

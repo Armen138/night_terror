@@ -4,15 +4,13 @@
 import Messages from './messages.js';
 import Monsters from './monsters.js';
 import Monster from './monster.js';
-import Items from './items.js';
 
-const items = new Items();
-const monsters = new Monsters();
 const messages = new Messages('data/messages.yml');
 
 class World {
   constructor(location, loader) {
     this.loader = loader;
+    this.monsters = new Monsters(loader);
     this.location = location;
   }
 
@@ -28,12 +26,12 @@ class World {
   }
 
   take(item) {
-    const idx = this.location.items.indexOf(item);
+    const idx = this.location.items.indexOf(item.name);
     if (idx === -1) {
       return { error: messages.not_found };
     }
-    const worldItem = items.get(this.location.items[idx]);
-    if (worldItem.static) {
+    // const worldItem = items.get(this.location.items[idx]);
+    if (item.static) {
       return { error: messages.static_item };
     }
     return { item: this.location.items.splice(idx, 1)[0] };
@@ -44,7 +42,7 @@ class World {
       try {
         this.loader.get(`data/locations/${location.replace(/ /g, '_')}.yml`).then(data => {
           if (data.monsters) {
-            data.monsters = data.monsters.map((monster) => new Monster(monsters.get(monster)));
+            data.spawned = data.monsters.map((monster) => new Monster(this.monsters.get(monster)));
           }
           this.location = data;
           resolve(data);

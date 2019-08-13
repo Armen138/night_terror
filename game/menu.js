@@ -33,9 +33,9 @@ class Menu extends Events {
 
   render() {
     this.renderer.clear();
-    this.renderer.text(this.data.header.text, this.data.header.style, true);
-    this.renderer.text(this.data.title.text, this.data.title.style, true);
-    this.renderer.text(this.subtitle, this.data.subtitle.style, true);
+    this.renderer.text(this.data.header.text, this.data.header.style);
+    this.renderer.text(this.data.title.text, this.data.title.style);
+    this.renderer.text(this.subtitle, this.data.subtitle.style);
     this.renderer.text(this.help());
     this.renderer.prompt(this.prompt);
     this.renderer.show();
