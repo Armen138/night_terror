@@ -1,8 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable arrow-parens */
 /* eslint-disable import/extensions */
-import fs from 'fs';
-import yaml from 'js-yaml';
 import Messages from './messages.js';
 import World from './world.js';
 import Character from './character.js';
@@ -17,17 +15,27 @@ const healthScale = [
 ];
 
 class Game extends Events {
-  constructor(renderer) {
+  constructor(renderer, loader) {
     super();
     this.time = 0;
     this.renderer = renderer;
-    const worldConfig = yaml.safeLoad(fs.readFileSync('data/world.yml', 'utf8'));
-
-    this.world = new World(worldConfig);
-    this.character = new Character();
-    this.messages = new Messages('data/messages.yml');
-    this.countdown = yaml.safeLoad(fs.readFileSync('data/countdown.yml', 'utf8'));
+    loader.get('data/world.yml').then(worldConfig => {
+      loader.get(`data/locations/${worldConfig.spawn.replace(/ /g, '_')}.yml`).then(location => {
+        this.world = new World(location, loader);
+        this.character = new Character();
+        loader.get('data/messages.yml').then(messageData => {
+          this.messages = new Messages(messageData);
+          loader.get('data/countdown.yml').then(countdown => {
+            this.countdown = countdown;
+            this.emit('ready');
+          });
+        });
+      });
+    });
     this.items = new Items(renderer);
+
+    // const worldConfig = yaml.safeLoad(fs.readFileSync('data/world.yml', 'utf8'));
+
     this.commands = {
       menu: this.menu.bind(this),
       look: this.look.bind(this),

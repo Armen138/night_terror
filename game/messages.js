@@ -1,10 +1,8 @@
 /* eslint-disable no-restricted-syntax */
-import fs from 'fs';
-import yaml from 'js-yaml';
 
 class Messages {
-  constructor(fileName) {
-    this.data = yaml.safeLoad(fs.readFileSync(fileName, 'utf8'));
+  constructor(data) {
+    this.data = data;
     const keys = Object.keys(this.data);
     for (const key of keys) {
       Object.defineProperty(this, key, {

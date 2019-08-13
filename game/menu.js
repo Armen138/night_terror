@@ -1,35 +1,25 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable arrow-parens */
 /* eslint-disable import/extensions */
-import fs from 'fs';
-import yaml from 'js-yaml';
 import Events from './events.js';
 
 class Menu extends Events {
-  constructor(fileName, renderer) {
+  constructor(data, renderer) {
     super();
     this.renderer = renderer;
-    this.data = {};
-    fs.readFile(fileName, 'utf8', (err, data) => {
-      if (err) {
-        this.emit('error');
-      } else {
-        this.data = yaml.safeLoad(data);
-        if (this.data.exclude) {
-          for (const exclude of this.data.exclude) {
-            delete this.commands[exclude];
-          }
-        }
-        this.renderer.register(this.commands);
-        this.emit('ready');
-      }
-    });
+    this.data = data;
     this.commands = {
       play: this.play.bind(this),
       load: this.load.bind(this),
       save: this.save.bind(this),
       help: this.help.bind(this),
     };
+    if (this.data.exclude) {
+      for (const exclude of this.data.exclude) {
+        delete this.commands[exclude];
+      }
+    }
+    this.renderer.register(this.commands);
   }
 
   get subtitle() {

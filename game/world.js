@@ -1,6 +1,6 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable arrow-parens */
 /* eslint-disable import/extensions */
-import fs from 'fs';
-import yaml from 'js-yaml';
 import Messages from './messages.js';
 import Monsters from './monsters.js';
 import Monster from './monster.js';
@@ -11,15 +11,14 @@ const monsters = new Monsters();
 const messages = new Messages('data/messages.yml');
 
 class World {
-  constructor(config) {
-    this.config = config;
-    this.location = yaml.safeLoad(fs.readFileSync(`data/locations/${config.spawn.replace(/ /g, '_')}.yml`, 'utf8'));
+  constructor(location, loader) {
+    this.loader = loader;
+    this.location = location;
   }
 
   go(location) {
     const promise = new Promise((resolve, reject) => {
       this.loadLocation(location).then((data) => {
-        // this.location = data;
         resolve(data);
       }).catch((e) => {
         reject(e);
@@ -43,12 +42,13 @@ class World {
   loadLocation(location) {
     const promise = new Promise((resolve, reject) => {
       try {
-        const data = yaml.safeLoad(fs.readFileSync(`data/locations/${location.replace(/ /g, '_')}.yml`, 'utf8'));
-        if (data.monsters) {
-          data.monsters = data.monsters.map((monster) => new Monster(monsters.get(monster)));
-        }
-        this.location = data;
-        resolve(data);
+        this.loader.get(`data/locations/${location.replace(/ /g, '_')}.yml`).then(data => {
+          if (data.monsters) {
+            data.monsters = data.monsters.map((monster) => new Monster(monsters.get(monster)));
+          }
+          this.location = data;
+          resolve(data);
+        });
       } catch (e) {
         reject(e);
       }
