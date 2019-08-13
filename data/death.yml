@@ -1,0 +1,34 @@
+prompt: game over
+header: 
+  text: An untimely end
+  style:
+    color: white
+    background: "#540a00"
+    font-weight: bold
+    text-align: center
+title: 
+  style:
+    color: "#540a00"
+    text-align: center
+  text: " @@@@@@@@   @@@@@@   @@@@@@@@@@   @@@@@@@@      @@@@@@   @@@  @@@  @@@@@@@@  @@@@@@@   \n
+@@@@@@@@@  @@@@@@@@  @@@@@@@@@@@  @@@@@@@@     @@@@@@@@  @@@  @@@  @@@@@@@@  @@@@@@@@  \n
+!@@        @@!  @@@  @@! @@! @@!  @@!          @@!  @@@  @@!  @@@  @@!       @@!  @@@  \n
+!@!        !@!  @!@  !@! !@! !@!  !@!          !@!  @!@  !@!  @!@  !@!       !@!  @!@  \n
+!@! @!@!@  @!@!@!@!  @!! !!@ @!@  @!!!:!       @!@  !@!  @!@  !@!  @!!!:!    @!@!!@!   \n
+!!! !!@!!  !!!@!!!!  !@!   ! !@!  !!!!!:       !@!  !!!  !@!  !!!  !!!!!:    !!@!@!    \n
+:!!   !!:  !!:  !!!  !!:     !!:  !!:          !!:  !!!  :!:  !!:  !!:       !!: :!!   \n
+:!:   !::  :!:  !:!  :!:     :!:  :!:          :!:  !:!   ::!!:!   :!:       :!:  !:!  \n
+ ::: ::::  ::   :::  :::     ::    :: ::::     ::::: ::    ::::     :: ::::  ::   :::  \n
+ :: :: :    :   : :   :      :    : :: ::       : :  :      :      : :: ::    :   : :  "
+subtitle:
+  style:
+    color: white
+    background: "#540a00"
+    text-align: center
+  text:
+    - Better luck next time!
+    - Could be worse... no wait
+    - I've got some good news, and some bad news. Actually no, it's all bad.
+    - I wish I could say it was swift and painless, but it really wasn't.
+exclude:
+  - save

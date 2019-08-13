@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 import fs from 'fs';
 import yaml from 'js-yaml';
-import chalk from 'chalk';
 
 const itemColors = {
   common: 'green',
@@ -13,7 +12,8 @@ const itemColors = {
 };
 
 class Items {
-  constructor() {
+  constructor(renderer) {
+    this.renderer = renderer;
     this.data = yaml.safeLoad(fs.readFileSync('data/items.yml', 'utf8'));
   }
 
@@ -29,9 +29,9 @@ class Items {
   render(itemName) {
     const item = this.get(itemName);
     const damage = item.damage ? '🗡️'.repeat(item.damage) : '';
-    const health = item.health ? chalk.red('❤︎'.repeat(item.health)) : '';
-    const armor = item.armor ? chalk.yellow('🛡️'.repeat(item.armor)) : '';
-    return item ? `${chalk[itemColors[item.prevalence]](item.name)} ${damage}${health}${armor}` : 'unknown item';
+    const health = item.health ? this.renderer.style('❤︎'.repeat(item.health), { color: 'red' }) : '';
+    const armor = item.armor ? this.renderer.style('🛡️'.repeat(item.armor), { color: 'yellow' }) : '';
+    return item ? this.renderer.style(`${item.name} ${damage}${health}${armor}`, { color: itemColors[item.prevalence] }) : 'unknown item';
   }
 }
 

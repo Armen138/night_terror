@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable arrow-parens */
 /* eslint-disable import/extensions */
 import fs from 'fs';
@@ -14,6 +15,12 @@ class Menu extends Events {
         this.emit('error');
       } else {
         this.data = yaml.safeLoad(data);
+        if (this.data.exclude) {
+          for (const exclude of this.data.exclude) {
+            delete this.commands[exclude];
+          }
+        }
+        this.renderer.register(this.commands);
         this.emit('ready');
       }
     });
@@ -23,7 +30,6 @@ class Menu extends Events {
       save: this.save.bind(this),
       help: this.help.bind(this),
     };
-    this.renderer.register(this.commands);
   }
 
   get subtitle() {

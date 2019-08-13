@@ -9,6 +9,11 @@
 # equip: which equip slot to use
 # static: true if this object can't be added to an inventory
 # consumable: can be "used" from inventory without another item to react with
+- name: baseball cap
+  prevalence: common
+  description: It say's "I ❤ NY" on it
+  armor: 3
+  equip: head
 - name: rusty nail
   prevalence: uncommon
   description: Standard issue rusty nail, probably causes tetanus. Better handle with care.

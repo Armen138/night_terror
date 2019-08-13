@@ -59,8 +59,11 @@ class TerminalRenderer {
       }
       value = aligned.join('\n');
     }
-    if (style && (style.color || style.background)) {
+    if (style && (style.color || style.background || style['font-weight'])) {
       let colored = chalk;
+      if (style['font-weight'] && style['font-weight'].indexOf('bold') !== -1) {
+        colored = colored.bold;
+      }
       if (style.color) {
         if (style.color.startsWith('#')) {
           colored = colored.hex(style.color);

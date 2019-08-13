@@ -1,23 +1,13 @@
-/* eslint-disable no-mixed-operators */
-/* eslint-disable arrow-parens */
 /* eslint-disable no-restricted-syntax */
+/* eslint-disable arrow-parens */
 /* eslint-disable import/extensions */
 import fs from 'fs';
 import yaml from 'js-yaml';
-import Vorpal from 'vorpal';
-import chalk from 'chalk';
 import Messages from './messages.js';
 import World from './world.js';
 import Character from './character.js';
 import Items from './items.js';
-
-const worldConfig = yaml.safeLoad(fs.readFileSync('data/world.yml', 'utf8'));
-
-const world = new World(worldConfig);
-const character = new Character();
-const messages = new Messages('data/messages.yml');
-const items = new Items();
-
+import Events from './events.js';
 
 const healthScale = [
   'red',
@@ -26,341 +16,345 @@ const healthScale = [
   'green',
 ];
 
-const Game = (renderer) => {
-  const game = renderer.vorpal;
-  game.history('game-command-history');
-  const countdown = yaml.safeLoad(fs.readFileSync('data/countdown.yml', 'utf8'));
+class Game extends Events {
+  constructor(renderer) {
+    super();
+    this.time = 0;
+    this.renderer = renderer;
+    const worldConfig = yaml.safeLoad(fs.readFileSync('data/world.yml', 'utf8'));
 
-  game.time = 0;
-  game.play = () => {
-    renderer.clear();
-    game.look();
-    game.show();
-  };
+    this.world = new World(worldConfig);
+    this.character = new Character();
+    this.messages = new Messages('data/messages.yml');
+    this.countdown = yaml.safeLoad(fs.readFileSync('data/countdown.yml', 'utf8'));
+    this.items = new Items(renderer);
+    this.commands = {
+      menu: this.menu.bind(this),
+      look: this.look.bind(this),
+      inventory: this.inventory.bind(this),
+      take: this.take.bind(this),
+      info: this.info.bind(this),
+      examine: this.examine.bind(this),
+      drop: this.drop.bind(this),
+      eat: this.eat.bind(this),
+      use: this.use.bind(this),
+      go: this.go.bind(this),
+      equip: this.equip.bind(this),
+      unequip: this.unequip.bind(this),
+      attack: this.attack.bind(this),
+    };
+    this.renderer.register(this.commands, this.autocomplete.bind(this));
+  }
 
-  game.advance = () => {
-    game.time += 1;
-    if (world.location.monsters && world.location.monsters.length > 0) {
-      for (const monster of world.location.monsters) {
-        const damage = monster.attack();
-        game.log(damage.message);
-        const status = character.defend(damage);
-        game.log(status.message);
-        if (status.status === 'death') {
-          game.over();
-        }
-      }
+  autocomplete(command) {
+    switch (command) {
+      case 'take':
+        return () => this.world.location.items;
+      case 'use':
+      case 'eat':
+      case 'drop':
+      case 'equip':
+        return () => this.character.inventory;
+      case 'unequip':
+        return () => this.character.equipped;
+      case 'examine':
+        return () => this.character.inventory.concat(this.world.location.items);
+      case 'attack':
+        return () => this.world.location.monsters.map(monster => monster.name);
+      case 'go':
+        return () => this.world.location.connects;
+      default:
+        return () => [];
     }
-    if (countdown.length > 0) {
-      const message = countdown.shift();
-      game.log(chalk.grey(message));
-    } else {
-      game.over();
-    }
-    game.delimiter(`[${chalk.red('❤'.repeat(character.health))}][${world.location.name}]$`);
-  };
-  game.over = () => {
-    game.log('Game over. You ded.');
-  };
-  game.applyEffects = (worldItem, itemName) => {
+  }
+
+  applyEffects(worldItem, itemName) {
     if (worldItem.effect.connects) {
-      world.location.connects.push(worldItem.effect.connects);
+      this.world.location.connects.push(worldItem.effect.connects);
     }
     if (worldItem.effect.removes) {
       if (worldItem.effect.removes === itemName) {
         // remove item from inventory
-        const removeItem = character.inventory.indexOf(worldItem.effect.removes);
+        const removeItem = this.character.inventory.indexOf(worldItem.effect.removes);
         if (removeItem !== -1) {
-          character.inventory.splice(removeItem, 1);
+          this.character.inventory.splice(removeItem, 1);
         }
       } else {
         // remove item from world
-        const removeItem = world.location.items.indexOf(worldItem.effect.removes);
+        const removeItem = this.world.location.items.indexOf(worldItem.effect.removes);
         if (removeItem !== -1) {
-          world.location.items.splice(removeItem, 1);
+          this.world.location.items.splice(removeItem, 1);
         }
       }
     }
     if (worldItem.effect.adds) {
-      world.location.items.push(worldItem.effect.adds);
+      this.world.location.items.push(worldItem.effect.adds);
     }
     if (worldItem.effect.grow_inventory) {
-      character.inventorySlots += worldItem.effect.grow_inventory;
+      this.character.inventorySlots += worldItem.effect.grow_inventory;
     }
     if (worldItem.effect.prints) {
-      game.log(worldItem.effect.prints);
+      this.renderer.text(worldItem.effect.prints);
     }
-  };
+  }
 
-  game.look = () => {
-    if (world.location.title) {
-      game.log(chalk.white.bold(world.location.title));
-    }
-    game.log(world.location.description);
-    if (world.location.items && world.location.items.length > 0) {
-      const worldItems = world.location.items.map(itemName => items.render(itemName));
-      game.log(`Items here:\n${worldItems.join('\n')}`);
-    }
-    if (world.location.monsters && world.location.monsters.length > 0) {
-      const { monsters } = world.location;
-      game.log(`Monsters here:\n${monsters.map(monster => monster.name).join('\n')}`);
-    }
-    if (world.location.connects) {
-      game.log(`This place connects to:\n${world.location.connects.join('\n')}`);
-    }
-  };
-
-  game.command('menu', 'Return to main menu')
-    .action((args, callback) => {
-      process.stdout.write('\u001B[2J\u001B[0;0f');
-      game.log(game.menu.intro);
-      game.hide();
-      game.menu.show();
-      callback();
-    });
-
-  game.command('look', 'Look around')
-    .action(function look(args, callback) {
-      game.look.call(this);
-      callback();
-    });
-
-  game.command('inventory', 'See what you have stored in your inventory')
-    .action((args, callback) => {
-      function usable(itemName, itemRender) {
-        let prefix = '';
-        for (const worldItem of world.location.items) {
-          const item = items.get(worldItem);
-          if (item['reacts with'] && item['reacts with'] === itemName) {
-            prefix = chalk.magenta('*');
+  attack(monster, callback) {
+    const monsterIdx = this.world.location.monsters.map(creature => creature.name).indexOf(monster);
+    if (monsterIdx !== -1) {
+      const damage = this.character.attack();
+      this.renderer.text(damage.message);
+      const status = this.world.location.monsters[monsterIdx].defend(damage);
+      this.renderer.text(status.message);
+      if (status.status === 'death') {
+        this.world.location.monsters.splice(monsterIdx, 1);
+        if (status.drops && status.drops.length > 0) {
+          this.world.location.items = this.world.location.items.concat(status.drops);
+          for (const drop of status.drops) {
+            this.renderer.text(`It dropped ${this.items.render(drop)}`);
           }
         }
-        return prefix + itemRender;
       }
-      game.log(`${character.inventorySlots} slots, ${character.inventorySlots - character.inventory.length} free.`);
-      if (character.inventory.length > 0) {
-        game.log(character.inventory.map(item => usable(item, items.render(item))).join('\n'));
-      }
-      callback();
-    });
+      this.advance();
+    } else {
+      this.renderer.text(this.messages.not_found, { color: 'red' });
+    }
+    callback();
+  }
 
-  game.command('go <place...>', 'Go to connecting location')
-    .autocomplete(() => world.location.connects)
-    .action(function go(args, callback) {
-      const place = args.place.join(' ');
-      world.go(place).then(() => {
-        process.stdout.write('\u001B[2J\u001B[0;0f');
-        // this.delimiter(`[${chalk.yellow(data.name)}]$`);
-        game.delimiter(`[${chalk.red('❤︎'.repeat(character.health))}][${world.location.name}]$`);
-        game.look.call(this);
-        // not sure if moving locations should advance the game,
-        // since the location itself has a lot of text attached already.
-        // game.advance();
-        callback();
-      });
-    });
-
-  game.command('take <item...>', 'Take an item')
-    .autocomplete(() => world.location.items)
-    .action((args, callback) => {
-      const item = args.item.join(' ');
-      character.take(world, item).then(message => {
-        game.log(message);
-        game.advance();
-        callback();
-      }).catch(error => {
-        game.log(chalk.red(error));
-        callback();
-      });
-    });
-
-  game.command('drop <item...>', 'Drop an item')
-    .autocomplete(() => character.inventory)
-    .action((args, callback) => {
-      const itemName = args.item.join(' ');
-      const inventorySlot = character.inventory.indexOf(itemName);
-      if (inventorySlot === -1) {
-        game.log(chalk.red(messages.not_in_inventory));
-      } else {
-        world.location.items.push(itemName);
-        character.inventory.splice(inventorySlot, 1);
-        game.log(`You drop the ${itemName}.`);
-        game.advance();
-      }
-      callback();
-    });
-
-  game.command('unequip <item...>', 'Equip an item from your inventory')
-    .autocomplete(() => character.equipped)
-    .action((args, callback) => {
-      let used = false;
-      const itemName = args.item.join(' ');
-      for (const slot in character.equipment) {
-        if (character.equipment[slot] && character.equipment[slot].name === itemName) {
-          character.equipment[slot] = null;
-          if (character.inventory.length < character.inventorySlots) {
-            character.inventory.push(itemName);
-            game.log(`You've unequipped ${itemName}.`);
-          } else {
-            world.location.items.push(itemName);
-            game.log(`You've unequipped ${itemName}, and dropped it on the floor in front of you.`);
-          }
-          used = true;
-          break;
-        }
-      }
-      if (!used) {
-        game.log(chalk.red(messages.cant_use));
-      } else {
-        game.advance();
-      }
-      callback();
-    });
-
-
-  game.command('equip <item...>', 'Equip an item from your inventory')
-    .autocomplete(() => character.inventory)
-    .action((args, callback) => {
-      let used = false;
-      const itemName = args.item.join(' ');
-      const inventorySlot = character.inventory.indexOf(itemName);
-      if (inventorySlot === -1) {
-        game.log(chalk.red(messages.not_in_inventory));
+  equip(itemName, callback) {
+    let used = false;
+    const inventorySlot = this.character.inventory.indexOf(itemName);
+    if (inventorySlot === -1) {
+      this.renderer.text(this.messages.not_in_inventory, { color: 'red' });
+      used = true;
+    } else {
+      const inventoryItem = this.items.get(itemName);
+      const equipmentSlot = inventoryItem.equip;
+      if (this.character.equipment[equipmentSlot] === null) {
+        this.character.equipment[equipmentSlot] = inventoryItem;
+        this.character.inventory.splice(inventorySlot, 1);
+        this.renderer.text(`You've equipped ${itemName} in the ${equipmentSlot} slot`);
         used = true;
       } else {
-        const inventoryItem = items.get(itemName);
-        const equipmentSlot = inventoryItem.equip;
-        if (character.equipment[equipmentSlot] === null) {
-          character.equipment[equipmentSlot] = inventoryItem;
-          character.inventory.splice(inventorySlot, 1);
-          game.log(`You've equipped ${itemName} in the ${equipmentSlot} slot`);
-          used = true;
-        } else {
-          game.log(chalk.red(messages.slot_used));
-          used = true;
-        }
+        this.renderer.text(this.messages.slot_used, { color: 'red' });
+        used = true;
       }
-      if (!used) {
-        game.log(chalk.red(messages.cant_use));
-      } else {
-        game.advance();
-      }
-      callback();
-    });
+    }
+    if (!used) {
+      this.renderer.text(this.messages.cant_use, { color: 'red' });
+    } else {
+      this.advance();
+    }
+    callback();
+  }
 
-  game.command('use <item...>', 'Use an item from your inventory')
-    .autocomplete(() => character.inventory)
-    .action((args, callback) => {
-      let used = false;
-      const itemName = args.item.join(' ');
-      const inventorySlot = character.inventory.indexOf(itemName);
-      if (inventorySlot === -1) {
-        game.log(chalk.red(messages.not_in_inventory));
+  unequip(itemName, callback) {
+    let used = false;
+    for (const slot in this.character.equipment) {
+      if (this.character.equipment[slot] && this.character.equipment[slot].name === itemName) {
+        this.character.equipment[slot] = null;
+        if (this.character.inventory.length < this.character.inventorySlots) {
+          this.character.inventory.push(itemName);
+          this.renderer.text(`You've unequipped ${itemName}.`);
+        } else {
+          this.world.location.items.push(itemName);
+          this.renderer.text(`You've unequipped ${itemName}, and dropped it on the floor in front of you.`);
+        }
+        used = true;
+        break;
+      }
+    }
+    if (!used) {
+      this.renderer.text(this.messages.cant_use, { color: 'red' });
+    } else {
+      this.advance();
+    }
+    callback();
+  }
+
+  use(itemName, callback) {
+    let used = false;
+    const inventorySlot = this.character.inventory.indexOf(itemName);
+    if (inventorySlot === -1) {
+      this.renderer.text(this.messages.not_in_inventory, { color: 'red' });
+      used = true;
+    } else {
+      const inventoryItem = this.items.get(itemName);
+      if (inventoryItem.consumable) {
+        this.applyEffects(inventoryItem, itemName);
         used = true;
       } else {
-        const inventoryItem = items.get(itemName);
-        if (inventoryItem.consumable) {
-          game.applyEffects(inventoryItem, itemName);
-          used = true;
-        } else {
-          for (const worldItemName of world.location.items) {
-            const worldItem = items.get(worldItemName);
-            if (worldItem['reacts with'] && worldItem['reacts with'].indexOf(itemName) !== -1) {
-              game.applyEffects(worldItem, itemName);
-              used = true;
-              break;
-            }
+        for (const worldItemName of this.world.location.items) {
+          const worldItem = this.items.get(worldItemName);
+          if (worldItem['reacts with'] && worldItem['reacts with'].indexOf(itemName) !== -1) {
+            this.applyEffects(worldItem, itemName);
+            used = true;
+            break;
           }
         }
       }
-      if (!used) {
-        game.log(chalk.red(messages.cant_use));
-      } else {
-        game.advance();
-      }
-      callback();
+    }
+    if (!used) {
+      this.renderer.text(this.messages.cant_use, { color: 'red' });
+    } else {
+      this.advance();
+    }
+    callback();
+  }
+
+  go(place, callback) {
+    this.world.go(place).then(() => {
+      this.renderer.clear();
+      this.prompt();
+      this.look(null, callback);
     });
+  }
 
-
-  game.command('eat <item...>', 'Eat something from your inventory')
-    .autocomplete(() => character.inventory)
-    .action((args, callback) => {
-      const itemName = args.item.join(' ');
-      const inventorySlot = character.inventory.indexOf(itemName);
-      if (inventorySlot === -1) {
-        game.log(chalk.red(messages.not_in_inventory));
+  eat(itemName, callback) {
+    const inventorySlot = this.character.inventory.indexOf(itemName);
+    if (inventorySlot === -1) {
+      this.renderer.text(this.messages.not_in_inventory, { color: 'red' });
+    } else {
+      const item = this.items.get(itemName);
+      if (!item.health) {
+        this.renderer.text(this.messages.not_edible, { color: 'red' });
       } else {
-        const item = items.get(itemName);
-        if (!item.health) {
-          game.log(chalk.red(messages.not_edible));
-        } else {
-          character.health += item.health;
-          if (character.health > character.maxHealth) {
-            character.health = character.maxHealth;
-          }
-          character.inventory.splice(inventorySlot, 1);
-          const color = Math.floor(healthScale.length / character.maxHealth * character.health) - 1;
-          const health = chalk[healthScale[color]](`${character.health}/${character.maxHealth}`);
-          game.log(`You ate the ${items.render(itemName)}. Your health is now ${health}`);
-          game.advance();
+        this.character.health += item.health;
+        if (this.character.health > this.character.maxHealth) {
+          this.character.health = this.character.maxHealth;
         }
+        this.character.inventory.splice(inventorySlot, 1);
+        const color = Math.floor((healthScale.length / this.character.maxHealth)
+                                  * this.character.health) - 1;
+        const health = this.renderer.style(`${this.character.health}/${this.character.maxHealth}`, { color: healthScale[color] });
+        this.renderer.text(`You ate the ${this.items.render(itemName)}. Your health is now ${health}`);
+        this.advance();
       }
+    }
+    callback();
+  }
+
+  take(item, callback) {
+    this.character.take(this.world, item).then(message => {
+      this.renderer.text(message);
+      this.advance();
+      callback();
+    }).catch(error => {
+      this.renderer.text(error, { color: 'red' });
       callback();
     });
-  game.command('info', 'Get character information')
-    .autocomplete(() => character.inventory.concat(world.location.items))
-    .action((args, callback) => {
-      game.log(`Health: ${character.health}`);
-      game.log(`Armor: ${character.armor}`);
-      game.log(`Damage: ${character.damage}`);
-      game.log(`Inventory: ${character.inventory.join(',')}`);
-      game.log(`Equipment: ${character.equipped}`);
+  }
+
+  info(arg, callback) {
+    this.renderer.text(`Health: ${this.character.health}`);
+    this.renderer.text(`Armor: ${this.character.armor}`);
+    this.renderer.text(`Damage: ${this.character.damage}`);
+    this.renderer.text(`Inventory: ${this.character.inventory.join(',')}`);
+    this.renderer.text(`Equipment: ${this.character.equipped}`);
+    callback();
+  }
+
+  drop(itemName, callback) {
+    const inventorySlot = this.character.inventory.indexOf(itemName);
+    if (inventorySlot === -1) {
+      this.renderer.text(this.messages.not_in_inventory, { color: 'red' });
+    } else {
+      this.world.location.items.push(itemName);
+      this.character.inventory.splice(inventorySlot, 1);
+      this.renderer.text(`You drop the ${itemName}.`);
+      this.advance();
+    }
+    callback();
+  }
+
+  inventory(args, callback) {
+    // function usable(itemName, itemRender) {
+    //   let prefix = '';
+    //   for (const worldItem of world.location.items) {
+    //     const item = items.get(worldItem);
+    //     if (item['reacts with'] && item['reacts with'] === itemName) {
+    //       prefix = chalk.magenta('*');
+    //     }
+    //   }
+    //   return prefix + itemRender;
+    // }
+    this.renderer.text(`${this.character.inventorySlots} slots, ${this.character.inventorySlots - this.character.inventory.length} free.`);
+    if (this.character.inventory.length > 0) {
+      this.renderer.text(this.character.inventory.map(item => this.items.render(item)).join('\n'));
+    }
+    callback();
+  }
+
+  examine(item, callback) {
+    const allItems = this.character.inventory.concat(this.world.location.items);
+    if (allItems.indexOf(item) !== -1) {
+      this.renderer.text(this.items.get(item).description);
+      this.advance();
+    } else {
+      this.renderer.text(this.messages.not_found, { color: 'red' });
+    }
+    callback();
+  }
+
+  look(args, callback) {
+    if (this.world.location.title) {
+      this.renderer.text(this.world.location.title, { color: 'white', 'font-weight': 'bold' });
+    }
+    this.renderer.text(this.world.location.description);
+    if (this.world.location.items && this.world.location.items.length > 0) {
+      const worldItems = this.world.location.items.map(itemName => this.items.render(itemName));
+      this.renderer.text(`Items here:\n${worldItems.join('\n')}`);
+    }
+    if (this.world.location.monsters && this.world.location.monsters.length > 0) {
+      const { monsters } = this.world.location;
+      this.renderer.text(`Monsters here:\n${monsters.map(monster => monster.name).join('\n')}`);
+    }
+    if (this.world.location.connects) {
+      this.renderer.text(`This place connects to:\n${this.world.location.connects.join('\n')}`);
+    }
+    if (callback) {
       callback();
-    });
-  game.command('examine <item...>', 'Examine an item')
-    .autocomplete(() => character.inventory.concat(world.location.items))
-    .action((args, callback) => {
-      const item = args.item.join(' ');
-      const allItems = character.inventory.concat(world.location.items);
-      if (allItems.indexOf(item) !== -1) {
-        game.log(items.get(item).description);
-        game.advance();
-      } else {
-        game.log(chalk.red(messages.not_found));
-      }
-      callback();
-    });
-  game.command('attack <monster...>', 'Attack a nearby monster')
-    .autocomplete(() => world.location.monsters.map(monster => monster.name))
-    .action((args, callback) => {
-      const monster = args.monster.join(' ');
-      const monsterIdx = world.location.monsters.map(creature => creature.name).indexOf(monster);
-      if (monsterIdx !== -1) {
-        const damage = character.attack();
-        game.log(damage.message);
-        const status = world.location.monsters[monsterIdx].defend(damage);
-        game.log(status.message);
+    }
+  }
+
+  advance() {
+    this.time += 1;
+    if (this.world.location.monsters && this.world.location.monsters.length > 0) {
+      for (const monster of this.world.location.monsters) {
+        const damage = monster.attack();
+        this.renderer.text(damage.message);
+        const status = this.character.defend(damage);
+        this.renderer.text(status.message);
         if (status.status === 'death') {
-          world.location.monsters.splice(monsterIdx, 1);
-          if (status.drops && status.drops.length > 0) {
-            world.location.items = world.location.items.concat(status.drops);
-            for (const drop of status.drops) {
-              game.log(`It dropped ${items.render(drop)}`);
-            }
-          }
+          this.emit('death');
         }
-        game.advance();
-      } else {
-        game.log(chalk.red(messages.not_found));
       }
-      callback();
-    });
-  // game.help(cmd => {
-  //     return "HALP";
-  // });
-  game.delimiter(`[${chalk.red('❤'.repeat(character.health))}][${world.location.name}]$`);
+    }
+    if (this.countdown.length > 0) {
+      const time = `[${this.countdown.length} minutes to midnight] `;
+      const message = this.countdown.shift();
+      this.renderer.text(time + message, { color: 'grey' });
+    } else {
+      this.emit('death'); // maybe this should be another event
+    }
+    this.prompt();
+  }
 
-  return game;
-};
+  menu() {
+    this.emit('menu');
+  }
+
+  prompt() {
+    const healthbar = this.renderer.style('❤'.repeat(this.character.health), { color: 'red' });
+    this.renderer.prompt(`${healthbar} | ${this.world.location.name}`);
+  }
+
+  play() {
+    this.renderer.clear();
+    this.look();
+    this.prompt();
+    this.renderer.show();
+  }
+}
 
 export default Game;

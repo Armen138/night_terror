@@ -5,6 +5,7 @@ monsters:
   - rat
 items: 
   - baseball bat
+  - baseball cap
   - locked door
 connects:
   - strange room

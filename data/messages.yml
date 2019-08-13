@@ -10,11 +10,11 @@ inventory_full:
   - You need more pockets!
   - Your inventory is full. Drop stuff to make space!
 not_edible:
-  - You don't have space to carry more items!
-  - No pockets left to stuff that into.
-  - No can do, buckaroo. No space!
-  - You need more pockets!
-  - Your inventory is full. Drop stuff to make space!
+  - You can't eat that!
+  - Ew, seriously?
+  - Don't be ridiculous.
+  - That doesn't look like it would taste good.
+  - You really shouldn't do that
 not_found:
   - This item doesn't appear to be around here.
   - You look around for a bit, but can't find that anywhere.
