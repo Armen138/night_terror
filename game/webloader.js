@@ -9,6 +9,18 @@ class WebLoader {
     // console.log(yaml);
   }
 
+  save() {
+    localStorage.files = JSON.stringify(this.files);
+  }
+
+  load() {
+    if (localStorage.files) {
+      this.files = JSON.parse(localStorage.files);
+    } else {
+      throw (new Error('Failed to load game'));
+    }
+  }
+
   get(filename) {
     const promise = new Promise((resolve, reject) => {
       if (this.files[filename]) {

@@ -44,7 +44,7 @@ class WebRenderer {
         const input = this.input.value.split(' ');
         const command = input.shift();
         const args = input.join(' ');
-        this.text(`>> ${this.input.value}`);
+        this.text(`${this.title}${this.input.value}`);
         this.input.value = '';
         if (!this.commands[command]) {
           if (this.commands.help) {
@@ -56,18 +56,20 @@ class WebRenderer {
       }
     });
 
-    const prompt = document.createElement('div');
-    prompt.innerHTML = this.title;
-    this.container.appendChild(prompt);
+    // const prompt = document.createElement('div');
+    // prompt.innerHTML = this.title;
+    // this.container.appendChild(prompt);
     noop();
   }
 
   prompt(promptString) {
-    this.title = promptString;
+    this.title = `[${promptString}]$ `;
+    document.querySelector('#delimiter').innerHTML = this.title;
   }
 
   clear() {
     this.messages = [];
+    this.container.innerHTML = '';
   }
 
   register(commands, autocomplete) {
@@ -77,7 +79,11 @@ class WebRenderer {
 
   style(text, style) {
     if (!text) return '';
-    const span = document.createElement('span');
+    let elementType = 'span';
+    if (style && style['text-align']) {
+      elementType = 'div';
+    }
+    const span = document.createElement(elementType);
     let styleAttribute = '';
     for (const item in style) {
       if (Object.prototype.hasOwnProperty.call(style, item)) {

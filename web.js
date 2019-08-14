@@ -8,6 +8,11 @@ import WebLoader from './game/webloader.js';
 const loader = new WebLoader();
 const game = new Game(new WebRenderer(), loader);
 
+// it's all input baby
+window.addEventListener('click', () => {
+  document.querySelector('#prompt').focus();
+});
+
 function main(menu, death) {
   menu.on('play', game.play.bind(game));
   death.on('play', game.play.bind(game));
