@@ -1,0 +1,13 @@
+title: The floor littered with unused mush, unrecognizable scraps, spoiled ingredients.
+description: Above you dirty pots and pans dangle. In the corner, a giant kettle twice
+your size slowly bubbles as it a strange green foam overflows. 
+Something is definitely brewing here.
+name: kitchen
+monsters:
+  - venemous frog
+items: 
+  - cooking pan
+  - giant pot
+connects:
+  - hallway
+  - dining room
