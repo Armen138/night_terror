@@ -1,0 +1,14 @@
+title: Plates and silverware have been set for some time now.
+description: A large table stretches across the dining room. 
+Easily able host over a hundred hungry guest. Can't help but 
+notice the much larger chairs at the ends have recently been
+moved.
+name: dining room
+monsters:
+  - none
+items: 
+  - fork
+  - campagne bottle
+connects:
+  - kitchen
+  - main hall
