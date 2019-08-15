@@ -1,0 +1,11 @@
+title: Not sure how you managed to squeeze in here.
+description: Barely enough room for a standard size dog, let alone a person.
+The homeowner seems to be gone for now, but you can bet they will be back anytime
+now.
+name: dog house
+monsters:
+items: 
+  - dog bone
+  - dog bowl
+connects:
+  - outside
