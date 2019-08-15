@@ -1,0 +1,13 @@
+title: The stench of different herbs & spices quickly becomes disorienting.
+description: Although difficult to tolorate, its fascinating to stare at the amount
+of unknown ingredients you have stumbled upon. A master alchamist or witch could
+certainaly make use of these. Unfourtuatnly you are neither.
+name: pantry
+monsters:
+  - none
+items: 
+  - garlic
+  - bread
+  - mushroom
+connects:
+  - kitchen
