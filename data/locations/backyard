@@ -1,0 +1,11 @@
+title: The rain continues to pour heavily around you. 
+description: An strangely shaped makeshift pool sits at the center of the backyard.
+As the rainwater starts fill and overflow, it creates a muddy chocolate type liquid.
+The pool has clearly been infested with creatures splashing about.
+name: backyard
+items: 
+  - lawn chair
+  - lawn chair
+connects:
+  - pool
+  - backyard breezeway
