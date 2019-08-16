@@ -1,9 +1,9 @@
 /* eslint-disable arrow-parens */
 /* eslint-disable import/extensions */
 /* eslint-disable no-restricted-syntax */
-import Messages from './messages.js';
+// import Messages from './messages.js';
 
-const messages = new Messages('data/messages.yml');
+// const messages = new Messages('data/messages.yml');
 class Character {
   constructor() {
     this.inventory = [];
@@ -57,7 +57,7 @@ class Character {
           resolve(`You have added ${item.name} to your inventory.`);
         }
       } else {
-        reject(messages.inventory_full);
+        reject(this.messages ? this.messages.inventory_full : 'inventory full');
       }
     });
     return promise;

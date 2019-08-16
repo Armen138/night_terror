@@ -31,6 +31,7 @@ class Monster {
     //   - thigh bone
     //   - leather boots
     this.items = items;
+    this.description = config.description || '';
     this.name = config.name || 'Monster';
     this.health = config.health || 1;
     this.damage = config.damage || 1;

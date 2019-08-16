@@ -42,7 +42,7 @@ class World {
       try {
         this.loader.get(`data/locations/${location.replace(/ /g, '_')}.yml`).then(data => {
           if (data.monsters) {
-            data.spawned = data.monsters.map((monster) => new Monster(this.monsters.get(monster)));
+            data.spawned = data.monsters.map((monster) => new Monster(this.monsters.get(monster), this.items));
           }
           this.location = data;
           resolve(data);

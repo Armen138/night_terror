@@ -39,6 +39,9 @@ class Menu extends Events {
     this.renderer.text(this.help());
     this.renderer.prompt(this.prompt);
     this.renderer.show();
+
+    // for fancy front-ends
+    this.emit('menu', { data: this.data, commands: this.commands });
   }
 
   help(cmd) {

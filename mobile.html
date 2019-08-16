@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+  <div id="app">
+    <v-app>
+      <profile></profile>
+
+      <v-content style="margin-bottom: 56px" dark>
+        <v-container v-show="view=='look'">        
+          <stats :game="game"></stats>
+          <location :game="game"></location>
+          <items :game="game"></items>
+          <monsters :game="game"></monsters>
+          <go :game="game"></go>
+        </v-container>
+        <v-container v-show="view=='inventory'">        
+          <inventory :game="game"></inventory>
+        </v-container>
+        <v-container v-show="view=='equipment'">        
+          <equipment :game="game"></equipment>
+        </v-container>
+        <v-container v-show="view=='history'">        
+          <history :game="game"></history>
+        </v-container>        
+      </v-content>
+      <v-snackbar top v-model="snackbar" :color="notificationColor">
+        <span v-html="notification"></span>
+        <v-btn
+          text
+          multi-line
+          @click="snackbar = false"
+        >
+        Close
+        </v-btn>
+      </v-snackbar>  
+      <v-bottom-navigation v-model="view" fixed grow dark color="#f4511e">
+        <v-btn active value="look">
+          <span>Look</span>
+          <v-icon>mdi-eye</v-icon>
+        </v-btn>
+        <v-btn value="inventory">
+          <span>Inventory</span>
+          <v-icon>mdi-toolbox</v-icon>
+        </v-btn>
+        <v-btn value="equipment">
+          <span>Equipment</span>
+          <v-icon>mdi-sword</v-icon>
+        </v-btn>
+        <v-btn value="history">
+          <span>History</span>
+          <v-icon>mdi-history</v-icon>
+        </v-btn>
+      </v-bottom-navigation>
+    </v-app>
+  </div>
+  <script src='node_modules/js-yaml/dist/js-yaml.min.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="mobile.js" type="module"></script>
+</body>
+
+</html>

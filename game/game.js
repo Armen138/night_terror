@@ -9,10 +9,10 @@ import Events from './events.js';
 // import Monsters from './monsters.js';
 
 const healthScale = [
-  'red',
+  '#EF5350',
   'orange',
   'yellow',
-  'green',
+  '#CDDC39',
 ];
 
 class Game extends Events {
@@ -25,12 +25,15 @@ class Game extends Events {
     loader.get('data/world.yml').then(worldConfig => {
       loader.get(`data/locations/${worldConfig.spawn.replace(/ /g, '_')}.yml`).then(location => {
         this.world = new World(location, loader);
+        this.world.items = this.items;
         this.character = new Character();
         loader.get('data/messages.yml').then(messageData => {
           this.messages = new Messages(messageData);
+          this.character.messages = this.messages;
           loader.get('data/countdown.yml').then(countdown => {
             this.countdown = countdown;
             this.emit('ready');
+            this.emit('location', this.world.location);
           });
         });
       });
@@ -54,6 +57,13 @@ class Game extends Events {
       attack: this.attack.bind(this),
     };
     this.renderer.register(this.commands, this.autocomplete.bind(this));
+  }
+
+  get itemsHere() {
+    if (this.world && this.world.location && this.world.location.items) {
+      return this.world.location.items.length > 0;
+    }
+    return false;
   }
 
   autocomplete(command) {
@@ -105,7 +115,10 @@ class Game extends Events {
     }
     if (worldItem.effect.prints) {
       this.renderer.text(worldItem.effect.prints);
+      this.emit('message', worldItem.effect.prints);
     }
+    this.emit('location-items', this.world.location.items);
+    this.emit('inventory', this.character.inventory);
   }
 
   attack(monster, callback) {
@@ -113,21 +126,28 @@ class Game extends Events {
     if (monsterIdx !== -1) {
       const damage = this.character.attack();
       this.renderer.text(damage.message);
+      this.emit('message', damage.message);
       const status = this.world.location.spawned[monsterIdx].defend(damage);
       this.renderer.text(status.message, null, monster);
+      this.emit('message-add', status.message);
       if (status.status === 'death') {
         this.world.location.spawned.splice(monsterIdx, 1);
         if (status.drops && status.drops.length > 0) {
           this.world.location.items = this.world.location.items.concat(status.drops);
           for (const drop of status.drops) {
             this.renderer.text(`It dropped ${this.items.render(drop)}`, null, monster);
+            this.emit('message-add', `It dropped ${this.items.render(drop)}`);
+            this.emit('location-items', this.world.location.items);
           }
         }
       }
       this.advance();
     } else {
       this.renderer.text(this.messages.not_found, { color: 'red' });
+      this.emit('error', this.messages.not_found);
     }
+    this.emit('monsters', this.world.location.spawned);
+    this.emit('stats', this.character);
     callback();
   }
 
@@ -136,6 +156,7 @@ class Game extends Events {
     const inventorySlot = this.character.inventory.indexOf(itemName);
     if (inventorySlot === -1) {
       this.renderer.text(this.messages.not_in_inventory, { color: 'red' });
+      this.emit('error', this.messages.not_in_inventory);
       used = true;
     } else {
       const inventoryItem = this.items.get(itemName);
@@ -143,18 +164,23 @@ class Game extends Events {
       if (this.character.equipment[equipmentSlot] === null) {
         this.character.equipment[equipmentSlot] = inventoryItem;
         this.character.inventory.splice(inventorySlot, 1);
+        this.emit('message', `You've equipped ${itemName} in the ${equipmentSlot} slot`);
+        this.emit('inventory', this.character.inventory);
         this.renderer.text(`You've equipped ${itemName} in the ${equipmentSlot} slot`);
         used = true;
       } else {
         this.renderer.text(this.messages.slot_used, { color: 'red' });
+        this.emit('error', this.messages.slot_used);
         used = true;
       }
     }
     if (!used) {
       this.renderer.text(this.messages.cant_use, { color: 'red' });
+      this.emit('error', this.messages.cant_use);
     } else {
       this.advance();
     }
+    this.emit('stats', this.character);
     callback();
   }
 
@@ -166,9 +192,13 @@ class Game extends Events {
         if (this.character.inventory.length < this.character.inventorySlots) {
           this.character.inventory.push(itemName);
           this.renderer.text(`You've unequipped ${itemName}.`);
+          this.emit('message', `You've unequipped ${itemName}.`);
+          this.emit('inventory', this.character.inventory);
         } else {
           this.world.location.items.push(itemName);
           this.renderer.text(`You've unequipped ${itemName}, and dropped it on the floor in front of you.`);
+          this.emit('message', `You've unequipped ${itemName}, and dropped it on the floor in front of you.`);
+          this.emit('location-items', this.world.location.items);
         }
         used = true;
         break;
@@ -179,6 +209,7 @@ class Game extends Events {
     } else {
       this.advance();
     }
+    this.emit('stats', this.character);
     callback();
   }
 
@@ -187,6 +218,7 @@ class Game extends Events {
     const inventorySlot = this.character.inventory.indexOf(itemName);
     if (inventorySlot === -1) {
       this.renderer.text(this.messages.not_in_inventory, { color: 'red' });
+      this.emit('error', this.messages.not_in_inventory);
       used = true;
     } else {
       const inventoryItem = this.items.get(itemName);
@@ -206,6 +238,7 @@ class Game extends Events {
     }
     if (!used) {
       this.renderer.text(this.messages.cant_use, { color: 'red' });
+      this.emit('error', this.messages.cant_use);
     } else {
       this.advance();
     }
@@ -217,6 +250,7 @@ class Game extends Events {
       this.renderer.clear();
       this.prompt();
       this.look(null, callback);
+      this.emit('location', this.world.location);
     });
   }
 
@@ -224,10 +258,12 @@ class Game extends Events {
     const inventorySlot = this.character.inventory.indexOf(itemName);
     if (inventorySlot === -1) {
       this.renderer.text(this.messages.not_in_inventory, { color: 'red' });
+      this.emit('error', this.messages.not_in_inventory);
     } else {
       const item = this.items.get(itemName);
       if (!item.health) {
         this.renderer.text(this.messages.not_edible, { color: 'red' });
+        this.emit('error', this.messages.not_edible);
       } else {
         this.character.health += item.health;
         if (this.character.health > this.character.maxHealth) {
@@ -237,7 +273,9 @@ class Game extends Events {
         const color = Math.floor((healthScale.length / this.character.maxHealth)
                                   * this.character.health) - 1;
         const health = this.renderer.style(`${this.character.health}/${this.character.maxHealth}`, { color: healthScale[color] });
+        this.emit('message', `You ate the ${this.items.render(itemName)}. Your health is now ${health}`);
         this.renderer.text(`You ate the ${this.items.render(itemName)}. Your health is now ${health}`);
+        this.emit('inventory', this.character.inventory);
         this.advance();
       }
     }
@@ -248,9 +286,13 @@ class Game extends Events {
     const item = this.items.get(itemName);
     this.character.take(this.world, item).then(message => {
       this.renderer.text(message);
+      this.emit('location-items', this.world.location.items);
+      this.emit('inventory', this.character.inventory);
+      this.emit('message', message);
       this.advance();
       callback();
     }).catch(error => {
+      this.emit('error', error);
       this.renderer.text(error, { color: 'red' });
       callback();
     });
@@ -268,13 +310,17 @@ class Game extends Events {
   drop(itemName, callback) {
     const inventorySlot = this.character.inventory.indexOf(itemName);
     if (inventorySlot === -1) {
+      this.emit('error', this.messages.not_in_inventory);
       this.renderer.text(this.messages.not_in_inventory, { color: 'red' });
     } else {
       this.world.location.items.push(itemName);
       this.character.inventory.splice(inventorySlot, 1);
+      this.emit('message', `You drop the ${itemName}.`);
       this.renderer.text(`You drop the ${itemName}.`);
       this.advance();
     }
+    this.emit('location-items', this.world.location.items);
+    this.emit('inventory', this.character.inventory);
     callback();
   }
 
@@ -336,8 +382,10 @@ class Game extends Events {
       for (const monster of monstersHere) {
         const damage = monster.attack();
         this.renderer.text(damage.message, null, monster.name);
+        this.emit('message-add', damage.message);
         const status = this.character.defend(damage);
         this.renderer.text(status.message, null, 'you');
+        this.emit('message-add', status.message);
         if (status.status === 'death') {
           this.emit('death');
         }
@@ -347,6 +395,7 @@ class Game extends Events {
       const time = `[${this.countdown.length} minutes to midnight] `;
       const message = this.countdown.shift();
       this.renderer.text(time + message, { color: 'grey' });
+      this.emit('message-add', time + message);
     } else {
       this.emit('death'); // maybe this should be another event
     }

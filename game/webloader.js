@@ -1,7 +1,5 @@
 /* eslint-disable import/extensions */
 /* eslint-disable arrow-parens */
-// import yaml from 'js-yaml';
-// import * as yaml from '../node_modules/js-yaml/dist/js-yaml.js';
 
 class WebLoader {
   constructor() {
