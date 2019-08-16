@@ -1,0 +1,10 @@
+title: The backyard breezeway shields you from the storm.
+description: Its mildly comforting knowing the rain cannot reach you here. The patio
+looks dry and relaxing enough. Maybe a small break is well deserved??
+name: backyard breezeway
+monsters:
+items: 
+  - lawn chair
+connects:
+  - guest lounge
+  - backyard
