@@ -1,12 +1,9 @@
 title: You've entered the main hall.
-description: Easily the largest room in the mansion. There are various paintings
-fancy sculptures, and old artifacts propped atop pedestals ready to be admired.
-A rickety staircase spirals upwards.
+description: >
+  Easily the largest room in the mansion. There are various paintings
+  fancy sculptures, and old artifacts propped atop pedestals ready to be admired.
+  A rickety staircase spirals upwards.
 name: main hall
-monsters:
-  - none
-items: 
-  - none
 connects:
   - hallway
   - dining room

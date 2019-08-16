@@ -28,7 +28,10 @@ class Items extends Events {
         return item;
       }
     }
-    return null;
+    return {
+      name: 'unknown',
+      description: 'An item was referenced, but not defined.',
+    };
   }
 
   render(itemName) {

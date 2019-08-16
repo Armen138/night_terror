@@ -1,0 +1,13 @@
+title: The muddy water carries your beat-up body through various drainage pipes.
+description: >
+  With each snake way curve you suffer a degree of humliations until and finally 
+  ejected through the final valve. You've hit rock bottom. Welcome to the sewers.
+  Below you lies the main sewer line.
+name: sewer pit
+monster:
+  - tiny sludge
+items:
+  - apple
+  - pipe wrench
+connects:
+  -sewer line

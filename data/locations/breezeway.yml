@@ -1,7 +1,8 @@
 title: You make your way through the archway. 
-description: On each side several statues of knights tower over you. They appear to
-monitor your every move. Each individual statue has a unique weapon or piece of armor
-that makes it stand out from each other.
+description: >
+  On each side several statues of knights tower over you. They appear to
+  monitor your every move. Each individual statue has a unique weapon or piece of armor
+  that makes it stand out from each other.
 name: archway
 monsters:
   - none

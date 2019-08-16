@@ -17,7 +17,7 @@ const template = /* html */`
     <span class="title font-weight-light">History</span>
   </v-card-title>
 </v-card>
-<v-alert v-for="item in items" :type="item.type" v-html="item.text"></v-alert>
+<v-alert v-for="item in items" :color="item.color" v-html="item.text"></v-alert>
 </div>
 `;
 const history = {
@@ -25,22 +25,14 @@ const history = {
   props: ['game'],
   created() {
     this.game.on('message', (data) => {
-      this.items.unshift({ text: data, type: 'primary' });
+      this.items.unshift({ text: data, color: 'primary' });
     });
     this.game.on('message-add', (data) => {
-      this.items.unshift({ text: data, type: 'primary' });
+      this.items.unshift({ text: data, color: 'primary' });
     });
     this.game.on('error', (data) => {
-      this.items.unshift({ text: data, type: 'error' });
+      this.items.unshift({ text: data, color: 'error' });
     });
-  },
-  methods: {
-    unequip(item) {
-      this.game.unequip(item.name, () => { });
-    },
-    itemImage(item) {
-      return `mobile/images/items/${item.name.replace(/ /g, '_')}.png`;
-    },
   },
   data: () => ({
     items: [],

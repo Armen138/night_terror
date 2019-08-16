@@ -251,6 +251,8 @@ class Game extends Events {
       this.prompt();
       this.look(null, callback);
       this.emit('location', this.world.location);
+    }).catch(e => {
+      this.emit('error', e);
     });
   }
 
@@ -409,6 +411,7 @@ class Game extends Events {
   prompt() {
     const healthbar = this.renderer.style('❤'.repeat(this.character.health), { color: 'red' });
     this.renderer.prompt(`${healthbar} | ${this.world.location.name}`);
+    this.emit('stats', this.character);
   }
 
   play() {

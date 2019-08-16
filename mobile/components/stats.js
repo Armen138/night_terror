@@ -23,10 +23,10 @@ const stats = {
       this.armor = this.game.character.armor;
       this.damage = this.game.character.damage;
     });
-    this.game.on('stats', () => {
-      this.health = this.game.character.health;
-      this.armor = this.game.character.armor;
-      this.damage = this.game.character.damage;
+    this.game.on('stats', (character) => {
+      this.health = character.health;
+      this.armor = character.armor;
+      this.damage = character.damage;
     });
   },
   data: () => ({

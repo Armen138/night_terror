@@ -41,11 +41,15 @@ class World {
     const promise = new Promise((resolve, reject) => {
       try {
         this.loader.get(`data/locations/${location.replace(/ /g, '_')}.yml`).then(data => {
-          if (data.monsters) {
-            data.spawned = data.monsters.map((monster) => new Monster(this.monsters.get(monster), this.items));
+          if (data.monsters && !data.visited) {
+            data.spawned = data.monsters
+              .map((monster) => new Monster(this.monsters.get(monster), this.items));
           }
           this.location = data;
+          this.location.visited = true;
           resolve(data);
+        }).catch(e => {
+          reject(e);
         });
       } catch (e) {
         reject(e);

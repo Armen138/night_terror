@@ -18,7 +18,12 @@ class Monsters extends Events {
         return monster;
       }
     }
-    return null;
+    return {
+      name: 'unknown',
+      health: 1,
+      damage: 1,
+      description: 'A monster was referenced, but not defined.',
+    };
   }
 }
 
