@@ -1,0 +1,9 @@
+title: While you ponder your life.
+description: The current drags you towards the deeper end of the pool. The surrounding 
+water pressure begins to build up as the whirlpool spins your faster and faster until
+eventually coming to a calm. The calm before the storm?
+name: deep end
+monsters:
+  - The Giant Mud Man
+connects:
+  - drainage
