@@ -6,7 +6,7 @@ name: kitchen
 monsters:
   - venemous frog
 items: 
-  - cooking pan
+  - frying pan
   - giant pot
 connects:
   - hallway
