@@ -1,11 +1,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable arrow-parens */
 /* eslint-disable import/extensions */
-import Messages from './messages.js';
 import Monsters from './monsters.js';
 import Monster from './monster.js';
 
-const messages = new Messages('data/messages.yml');
+// const this.messages = new Messages('data/this.messages.yml');
 
 class World {
   constructor(location, loader) {
@@ -28,11 +27,11 @@ class World {
   take(item) {
     const idx = this.location.items.indexOf(item.name);
     if (idx === -1) {
-      return { error: messages.not_found };
+      return { error: this.messages.not_found };
     }
     // const worldItem = items.get(this.location.items[idx]);
     if (item.static) {
-      return { error: messages.static_item };
+      return { error: this.messages.static_item };
     }
     return { item: this.location.items.splice(idx, 1)[0] };
   }

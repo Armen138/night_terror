@@ -6,6 +6,7 @@ import World from './world.js';
 import Character from './character.js';
 import Items from './items.js';
 import Events from './events.js';
+import Monster from './monster.js';
 // import Monsters from './monsters.js';
 
 const healthScale = [
@@ -20,7 +21,7 @@ class Game extends Events {
     super();
     this.time = 0;
     this.renderer = renderer;
-    // this.monsters = new Monsters(loader);
+    // this.world.monsters = new Monsters(loader);
     this.items = new Items(renderer, loader);
     loader.get('data/world.yml').then(worldConfig => {
       loader.get(`data/locations/${worldConfig.spawn.replace(/ /g, '_')}.yml`).then(location => {
@@ -30,6 +31,7 @@ class Game extends Events {
         loader.get('data/messages.yml').then(messageData => {
           this.messages = new Messages(messageData);
           this.character.messages = this.messages;
+          this.world.messages = this.messages;
           loader.get('data/countdown.yml').then(countdown => {
             this.countdown = countdown;
             this.emit('ready');
@@ -53,6 +55,7 @@ class Game extends Events {
       use: this.use.bind(this),
       go: this.go.bind(this),
       equip: this.equip.bind(this),
+      search: this.search.bind(this),
       unequip: this.unequip.bind(this),
       attack: this.attack.bind(this),
     };
@@ -148,7 +151,7 @@ class Game extends Events {
     }
     this.emit('monsters', this.world.location.spawned);
     this.emit('stats', this.character);
-    callback();
+    if (callback) { callback(); }
   }
 
   equip(itemName, callback) {
@@ -181,7 +184,7 @@ class Game extends Events {
       this.advance();
     }
     this.emit('stats', this.character);
-    callback();
+    if (callback) { callback(); }
   }
 
   unequip(itemName, callback) {
@@ -210,7 +213,7 @@ class Game extends Events {
       this.advance();
     }
     this.emit('stats', this.character);
-    callback();
+    if (callback) { callback(); }
   }
 
   use(itemName, callback) {
@@ -242,7 +245,36 @@ class Game extends Events {
     } else {
       this.advance();
     }
-    callback();
+    if (callback) { callback(); }
+  }
+
+  search(itemName, callback) {
+    const allItems = this.character.inventory.concat(this.world.location.items);
+    if (allItems.indexOf(itemName) !== -1 || (!itemName && this.world.location.search)) {
+      const item = itemName ? this.items.get(itemName) : this.world.location;
+      if (item.search && !item.searched) {
+        item.searched = true;
+        item.description += ` ${item.search.description}`;
+        this.renderer.text(item.search.prints, null, itemName);
+        this.emit('message', item.search.prints);
+        if (item.search.items) {
+          this.world.location.items = this.world.location.items.concat(item.search.items);
+        }
+        if (item.search.monsters) {
+          this.world.location.spawned = this.world.location.spawned
+            .concat(item.search.monsters
+              .map(monster => new Monster(this.world.monsters.get(monster), this.items)));
+        }
+        this.emit('location', this.world.location);
+        this.advance();
+      } else {
+        this.emit('message', 'You don\'t find anything new.');
+      }
+    } else {
+      this.renderer.text(this.messages.not_found, { color: 'red' });
+      this.emit('error', this.messages.not_found);
+    }
+    if (callback) { callback(); }
   }
 
   go(place, callback) {
@@ -281,7 +313,7 @@ class Game extends Events {
         this.advance();
       }
     }
-    callback();
+    if (callback) { callback(); }
   }
 
   take(itemName, callback) {
@@ -292,11 +324,11 @@ class Game extends Events {
       this.emit('inventory', this.character.inventory);
       this.emit('message', message);
       this.advance();
-      callback();
+      if (callback) { callback(); }
     }).catch(error => {
       this.emit('error', error);
       this.renderer.text(error, { color: 'red' });
-      callback();
+      if (callback) { callback(); }
     });
   }
 
@@ -306,7 +338,7 @@ class Game extends Events {
     this.renderer.text(`Damage: ${this.character.damage}`);
     this.renderer.text(`Inventory: ${this.character.inventory.join(',')}`);
     this.renderer.text(`Equipment: ${this.character.equipped}`);
-    callback();
+    if (callback) { callback(); }
   }
 
   drop(itemName, callback) {
@@ -323,7 +355,7 @@ class Game extends Events {
     }
     this.emit('location-items', this.world.location.items);
     this.emit('inventory', this.character.inventory);
-    callback();
+    if (callback) { callback(); }
   }
 
   inventory(args, callback) {
@@ -341,7 +373,7 @@ class Game extends Events {
     if (this.character.inventory.length > 0) {
       this.renderer.text(this.character.inventory.map(item => this.items.render(item)).join('\n'));
     }
-    callback();
+    if (callback) { callback(); }
   }
 
   examine(item, callback) {
@@ -352,7 +384,7 @@ class Game extends Events {
     } else {
       this.renderer.text(this.messages.not_found, { color: 'red' });
     }
-    callback();
+    if (callback) { callback(); }
   }
 
   look(args, callback) {
@@ -372,7 +404,7 @@ class Game extends Events {
       this.renderer.text(`This place connects to:\n${this.world.location.connects.join('\n')}`);
     }
     if (callback) {
-      callback();
+      if (callback) { callback(); }
     }
   }
 

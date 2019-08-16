@@ -6,6 +6,11 @@ description: >
 
   A door that looks like it leads outside is clumsily barricaded with scraps of wood and rusty nails. One of the nails has fallen on the floor.
 name: strange room
+search:
+  items:
+    - a shiny key
+  description: Some wood scraps lay disturbed on the floor.
+  prints: After kicking some scraps around the floor, you spot something shiny. It's a key! What could this open?
 items: 
   - rusty nail
   - orange

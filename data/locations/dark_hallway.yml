@@ -1,6 +1,13 @@
 title: When your eyes adjust to the dim light
 description: You see something moving in the far corner. It looks like it is coming toward you.
 name: dark hallway
+search:
+  items:
+    - coin
+  monsters:
+    - rat
+  prints: Behind a wooden box, another rat jumps out of a dark corner! It appears to be guarding a golden coin!
+  description: A wooden box sits in the far corner.
 monsters:
   - rat
 items: 

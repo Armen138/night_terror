@@ -29,8 +29,9 @@ class Items extends Events {
       }
     }
     return {
-      name: 'unknown',
-      description: 'An item was referenced, but not defined.',
+      name: itemName,
+      prevalence: 'rare',
+      description: 'This item was referenced, but not defined.',
     };
   }
 

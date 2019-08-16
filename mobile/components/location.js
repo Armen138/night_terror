@@ -29,6 +29,11 @@ const template = `
     <v-card-text>
       {{ location.description }}
     </v-card-text>
+    <v-card-actions v-show="location.search && !location.searched">
+    <v-btn small text @click="search">
+      search
+    </v-btn>
+    </v-card-actions>
   </v-card>
 `;
 const location = {
@@ -41,6 +46,11 @@ const location = {
     this.game.on('ready', () => {
       this.location = this.game.world.location;
     });
+  },
+  methods: {
+    search() {
+      this.game.search();
+    },
   },
   data: () => ({
     location: {},

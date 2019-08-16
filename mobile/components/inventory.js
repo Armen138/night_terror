@@ -21,6 +21,7 @@ const template = /* html */`
 class="mx-auto mb-2"
 max-width="640"
 v-for="(item, index) in items"
+:key="index"
 dark
 outlined
 >

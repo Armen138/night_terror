@@ -19,10 +19,10 @@ class Monsters extends Events {
       }
     }
     return {
-      name: 'unknown',
+      name: `Unknown monster: ${name}`,
       health: 1,
       damage: 1,
-      description: 'A monster was referenced, but not defined.',
+      description: 'This monster was referenced, but not defined.',
     };
   }
 }

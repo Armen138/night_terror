@@ -17,7 +17,7 @@ const template = /* html */`
     <span class="title font-weight-light">History</span>
   </v-card-title>
 </v-card>
-<v-alert v-for="item in items" :color="item.color" v-html="item.text"></v-alert>
+<v-alert class="mx-auto" max-width="640" v-for="(item, index) in items" :key="index" :color="item.color" v-html="item.text"></v-alert>
 </div>
 `;
 const history = {

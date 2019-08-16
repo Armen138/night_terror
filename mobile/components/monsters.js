@@ -18,7 +18,7 @@ const template = /* html */`
     <v-list two-line>
 
       <template v-for="(item, index) in items">
-        <v-list-item :key="item.name">
+        <v-list-item>
           <template v-slot:default="{ active, toggle }">
             <v-list-item-content>
               <v-list-item-title v-text="item.name"></v-list-item-title>
@@ -43,20 +43,6 @@ const template = /* html */`
 
   </v-list>
     </v-card-text>
-    <v-snackbar
-    v-model="snackbar"
-  ><span>
-  You've added <span style="color: yellow">item with super long name</span> to your inventory.
-  </span>
-  <v-btn
-      color="pink"
-      text
-      multi-line
-      @click="snackbar = false"
-    >
-      Close
-    </v-btn>
-  </v-snackbar>    
   </v-card>
 `;
 const monsters = {

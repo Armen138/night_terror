@@ -107,7 +107,7 @@ const items = {
   },
   methods: {
     take(item) {
-      this.game.take(item.name, () => {});
+      this.game.take(item.name);
     },
   },
   data: () => ({
