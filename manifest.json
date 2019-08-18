@@ -13,10 +13,10 @@
         "sizes": "512x512"
       }
     ],
-    "start_url": "/mobile.html",
+    "start_url": "/night_terror/mobile.html",
     "background_color": "#000000",
     "display": "standalone",
-    "scope": "/",
+    "scope": "/night_terror",
     "theme_color": "rgb(191, 54, 12)"
   }
   
