@@ -80,6 +80,7 @@ class Character {
     const penalty = Math.max(damage.damage - this.armor, 0);
     this.health -= penalty;
     if (this.health <= 0) {
+      this.health = 0;
       return {
         message: 'Ah, so this is it... this is where the adventure ends. We had a good run though, didn\'t we?',
         status: 'death',

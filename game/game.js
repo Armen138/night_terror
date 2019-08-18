@@ -3,6 +3,7 @@
 /* eslint-disable import/extensions */
 import Messages from './messages.js';
 import World from './world.js';
+import Menu from './menu.js';
 import Character from './character.js';
 import Items from './items.js';
 import Events from './events.js';
@@ -21,27 +22,9 @@ class Game extends Events {
     super();
     this.time = 0;
     this.renderer = renderer;
-    // this.world.monsters = new Monsters(loader);
-    this.items = new Items(renderer, loader);
-    loader.get('data/world.yml').then(worldConfig => {
-      loader.get(`data/locations/${worldConfig.spawn.replace(/ /g, '_')}.yml`).then(location => {
-        this.world = new World(location, loader);
-        this.world.items = this.items;
-        this.character = new Character();
-        loader.get('data/messages.yml').then(messageData => {
-          this.messages = new Messages(messageData);
-          this.character.messages = this.messages;
-          this.world.messages = this.messages;
-          loader.get('data/countdown.yml').then(countdown => {
-            this.countdown = countdown;
-            this.emit('ready');
-            this.emit('location', this.world.location);
-          });
-        });
-      });
-    });
-
-    // const worldConfig = yaml.safeLoad(fs.readFileSync('data/world.yml', 'utf8'));
+    this.loader = loader;
+    this.items = new Items(this.renderer, this.loader);
+    this.restart();
 
     this.commands = {
       menu: this.menu.bind(this),
@@ -67,6 +50,33 @@ class Game extends Events {
       return this.world.location.items.length > 0;
     }
     return false;
+  }
+
+  restart(callback) {
+    this.loader.get('data/world.yml').then(worldConfig => {
+      this.loader.get(`data/locations/${worldConfig.spawn.replace(/ /g, '_')}.yml`).then(location => {
+        this.world = new World(location, this.loader);
+        this.world.items = this.items;
+        this.world.on('ending', (ending) => {
+          this.end(ending);
+        });
+        this.character = new Character();
+        this.loader.get('data/messages.yml').then(messageData => {
+          this.messages = new Messages(messageData);
+          this.character.messages = this.messages;
+          this.world.messages = this.messages;
+          this.loader.get('data/countdown.yml').then(countdown => {
+            this.countdown = countdown;
+            this.emit('ready');
+            this.emit('location', this.world.location);
+            this.prompt();
+            if (callback) {
+              callback();
+            }
+          });
+        });
+      });
+    });
   }
 
   autocomplete(command) {
@@ -109,6 +119,9 @@ class Game extends Events {
           this.world.location.items.splice(removeItem, 1);
         }
       }
+    }
+    if (worldItem.effect.ending) {
+      this.end(worldItem.effect.ending);
     }
     if (worldItem.effect.adds) {
       this.world.location.items.push(worldItem.effect.adds);
@@ -277,6 +290,18 @@ class Game extends Events {
     if (callback) { callback(); }
   }
 
+  end(ending, callback) {
+    this.loader.get(`data/end/${ending.replace(/ /g, '_')}.yml`).then(data => {
+      this.emit('ending', data);
+      const endingScene = new Menu(data, this.renderer);
+      endingScene.on('play', () => { this.restart(this.play.bind(this)); });
+      if (callback) {
+        callback();
+      }
+      endingScene.render();
+    });
+  }
+
   go(place, callback) {
     this.world.go(place).then(() => {
       this.renderer.clear();
@@ -359,16 +384,6 @@ class Game extends Events {
   }
 
   inventory(args, callback) {
-    // function usable(itemName, itemRender) {
-    //   let prefix = '';
-    //   for (const worldItem of world.location.items) {
-    //     const item = items.get(worldItem);
-    //     if (item['reacts with'] && item['reacts with'] === itemName) {
-    //       prefix = chalk.magenta('*');
-    //     }
-    //   }
-    //   return prefix + itemRender;
-    // }
     this.renderer.text(`${this.character.inventorySlots} slots, ${this.character.inventorySlots - this.character.inventory.length} free.`);
     if (this.character.inventory.length > 0) {
       this.renderer.text(this.character.inventory.map(item => this.items.render(item)).join('\n'));
@@ -431,7 +446,8 @@ class Game extends Events {
       this.renderer.text(time + message, { color: 'grey' });
       this.emit('message-add', time + message);
     } else {
-      this.emit('death'); // maybe this should be another event
+      // this.emit('death'); // maybe this should be another event
+      this.end('midnight');
     }
     this.prompt();
   }

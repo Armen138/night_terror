@@ -1,0 +1,32 @@
+prompt: game over
+header: 
+  text: At the stroke of midnight
+  style:
+    color: white
+    background: "#540a00"
+    font-weight: bold
+    text-align: center
+description: >
+  A church bell in the distance rings twelve times, and you know your time is up.
+  As the shadows creep in through the floor boards, the last thing you see is a face coming out of the nearest wall,
+  malevolent red eyes and a toothy grin. "Now...", it says, "Now you join us..."
+title: 
+  style:
+    color: "#540a00"
+    text-align: center
+  text: >    
+    A church bell in the distance rings twelve times, and you know your time is up.
+    As the shadows creep in through the floor boards, the last thing you see is a face coming out of the nearest wall,
+    malevolent red eyes and a toothy grin. "Now...", it says, "Now you join us..."
+subtitle:
+  style:
+    color: white
+    background: "#540a00"
+    text-align: center
+  text:
+    - Better luck next time!
+    - Could be worse... no wait
+    - I've got some good news, and some bad news. Actually no, it's all bad.
+    - I wish I could say it was swift and painless, but it really wasn't.
+exclude:
+  - save

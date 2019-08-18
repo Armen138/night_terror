@@ -99,7 +99,6 @@ const go = {
   },
   methods: {
     go(item) {
-      console.log('go', item);
       this.game.go(item, () => {});
     },
   },

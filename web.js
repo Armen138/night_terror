@@ -13,18 +13,14 @@ window.addEventListener('click', () => {
   document.querySelector('#prompt').focus();
 });
 
-function main(menu, death) {
+function main(menu) {
   menu.on('play', game.play.bind(game));
-  death.on('play', game.play.bind(game));
   game.on('menu', menu.render.bind(menu));
-  game.on('death', death.render.bind(death));
+  game.on('death', () => game.end('death'));
   menu.render();
 }
 
 loader.get('data/world.yml').then(data => {
   const menu = new Menu(data, new WebRenderer());
-  loader.get('data/death.yml').then(deathMenu => {
-    const death = new Menu(deathMenu, new WebRenderer());
-    main(menu, death);
-  });
+  main(menu);
 });

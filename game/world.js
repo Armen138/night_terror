@@ -1,13 +1,15 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable arrow-parens */
 /* eslint-disable import/extensions */
+import Events from './events.js';
 import Monsters from './monsters.js';
 import Monster from './monster.js';
 
 // const this.messages = new Messages('data/this.messages.yml');
 
-class World {
+class World extends Events {
   constructor(location, loader) {
+    super();
     this.loader = loader;
     this.monsters = new Monsters(loader);
     this.location = location;
@@ -43,6 +45,9 @@ class World {
           if (data.monsters && !data.visited) {
             data.spawned = data.monsters
               .map((monster) => new Monster(this.monsters.get(monster), this.items));
+          }
+          if (data.ending) {
+            this.emit('ending', data.ending);
           }
           this.location = data;
           this.location.visited = true;

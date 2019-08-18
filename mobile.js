@@ -48,12 +48,40 @@ const vue = new Vue({
       this.notificationColor = 'error';
       this.snackbar = true;
     });
+    game.on('death', () => {
+      game.end('death');
+    });
+    game.on('location', () => {
+      window.scrollTo(0, 0);
+      this.view = 'look';
+    });
+    game.on('ending', (ending) => {
+      this.ending = ending;
+      this.dialog = true;
+      this.snackbar = false;
+    });
+  },
+  methods: {
+    restart() {
+      this.dialog = false;
+      game.restart();
+    },
+    random(list) {
+      const idx = Math.floor(Math.random() * list.length);
+      return list[idx];
+    },
   },
   data: () => ({
     game,
     notification: '',
+    ending: {
+      header: { text: '' },
+      title: { text: '' },
+      subtitle: { text: '' },
+    },
     notificationColor: 'primary',
     snackbar: false,
+    dialog: false,
     view: 'look',
     inventory: false,
   }),

@@ -70,6 +70,9 @@
 - name: rat tail
   prevalence: common
   description: Looks like some violence was involved in detaching this.
+  consumable: true
+  effect:
+    ending: death
 - name: coin
   prevalence: common
   description: A shiny coin. Could it still be worth something?

@@ -60,6 +60,32 @@
           <v-icon>mdi-history</v-icon>
         </v-btn>
       </v-bottom-navigation>
+      
+      <v-dialog
+      v-model="dialog"
+      fullscreen hide-overlay transition="dialog-bottom-transition"      
+      dark
+    >
+      <v-card>
+        <v-card-title class="headline">{{ ending.header.text }}</v-card-title>
+
+        <v-card-text>
+          {{ ending.description }}
+          {{ random(ending.subtitle.text) }}
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn            
+            text
+            @click="restart"
+          >
+            Restart game
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>       
     </v-app>
   </div>
   <script src='mobile/js-yaml.min.js'></script>
