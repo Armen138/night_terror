@@ -64,11 +64,20 @@ const vue = new Vue({
   methods: {
     restart() {
       this.dialog = false;
+      this.menu = false;
       game.restart();
     },
     random(list) {
       const idx = Math.floor(Math.random() * list.length);
       return list[idx];
+    },
+    load() {
+      this.menu = false;
+      game.load();
+    },
+    save() {
+      this.menu = false;
+      game.save();
     },
   },
   data: () => ({
@@ -82,6 +91,7 @@ const vue = new Vue({
     notificationColor: 'primary',
     snackbar: false,
     dialog: false,
+    menu: false,
     view: 'look',
     inventory: false,
   }),

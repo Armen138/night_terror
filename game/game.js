@@ -52,6 +52,24 @@ class Game extends Events {
     return false;
   }
 
+  save() {
+    const saveData = {
+      character: this.character,
+      location: this.world.location.name,
+    };
+    this.loader.save(saveData);
+    // console.log(JSON.stringify(this.character));
+  }
+
+  load() {
+    const data = this.loader.load();
+    // eslint-disable-next-line guard-for-in
+    for (const key in data.character) {
+      this.character[key] = data.character[key];
+    }
+    this.go(data.location);
+  }
+
   restart(callback) {
     this.loader.get('data/world.yml').then(worldConfig => {
       this.loader.get(`data/locations/${worldConfig.spawn.replace(/ /g, '_')}.yml`).then(location => {

@@ -7,8 +7,9 @@ class WebLoader {
     // console.log(yaml);
   }
 
-  save() {
+  save(data) {
     localStorage.files = JSON.stringify(this.files);
+    localStorage.data = JSON.stringify(data);
   }
 
   load() {
@@ -17,6 +18,10 @@ class WebLoader {
     } else {
       throw (new Error('Failed to load game'));
     }
+    if (localStorage.data) {
+      return JSON.parse(localStorage.data);
+    }
+    return {};
   }
 
   get(filename) {

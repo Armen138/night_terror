@@ -31,7 +31,6 @@ class World extends Events {
     if (idx === -1) {
       return { error: this.messages.not_found };
     }
-    // const worldItem = items.get(this.location.items[idx]);
     if (item.static) {
       return { error: this.messages.static_item };
     }

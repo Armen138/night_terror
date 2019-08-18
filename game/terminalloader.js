@@ -1,9 +1,18 @@
+/* eslint-disable class-methods-use-this */
 import fs from 'fs';
 import yaml from 'js-yaml';
 
 class TerminalLoader {
   constructor() {
     this.files = {};
+  }
+
+  save() {
+    console.log('not implemented for terminal');
+  }
+
+  load() {
+    console.log('not implemented for terminal');
   }
 
   get(filename) {
