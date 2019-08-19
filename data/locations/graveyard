@@ -1,0 +1,7 @@
+title: you've stumbled into and underground graveyard.
+desciption: Tombstones are neatly orgnized. You cant make out the names because the stone has
+been weatherd down enough to make it look obscure.
+name: graveyard
+monsters: undead zombie
+connects:
+ - furnace
