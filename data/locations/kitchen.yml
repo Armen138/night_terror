@@ -1,14 +1,9 @@
-title: The floor littered with unused mush, unrecognizable scraps, spoiled ingredients.
-description: >
-  Above you dirty pots and pans dangle. In the corner, a giant kettle twice
-  your size slowly bubbles as it a strange green foam overflows. 
-  Something is definitely brewing here.
+title: Dirty pots and pans dangle from above.
+description: It a mess in here. Nothing is where it should be. There appears to be signs
+that somebody made a sandwitch??
 name: kitchen
-monsters:
-  - venemous frog
-items: 
-  - frying pan
-  - giant pot
-connects:
-  - hallway
-  - dining room
+items:
+ - sandwitch
+ connects:
+ - dining room
+ - brewing hall
