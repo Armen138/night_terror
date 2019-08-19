@@ -1,0 +1,9 @@
+title: The main hallway connects almost every room in the mansion.
+description: The carpet in the main hallway has heavy signs of traffic. Tears, cuts,
+and even questionable stains. Before you stands the "grand hall"
+name: main hallway
+-connects
+ - main hall
+ - grandhall
+ - guest restroom
+ - laundry room
