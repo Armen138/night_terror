@@ -1,0 +1,8 @@
+title: The guest bedroom is imacculate as always
+desciption: The beds have been in a military fasion. It seems as if nobody has every used
+this room or the guest are extreamly organized.
+name: guest bedroom
+monsters: unhappy ghost
+connects:
+ - guest bathroom
+ - main hall
