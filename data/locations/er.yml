@@ -1,0 +1,11 @@
+title: Screems are particallouy louder here
+description: You've entred the ER waiting area. Patiences must be in a lot of pain or 
+the docs are not very good at treating, but instead inflicing the pain. This is the moment
+you realize, this isn't any ordinary medical bay.
+name: ER
+monsters:
+ -zombie patient
+items:
+ - nightgown
+ connects:
+  - medical bay
