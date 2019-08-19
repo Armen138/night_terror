@@ -1,3 +1,4 @@
+
 - name: rat
   description: It's a rat. It does not look healthy.
   # damage before it goes splat
@@ -14,3 +15,64 @@
   drops:
     - thigh bone
     - leather boots
+    
+    
+- name: witch
+  description: Your about to get hexed
+  # damage before it goes splat
+  health: 1
+  # damage it deals on successful attack
+  damage: 1
+  drops: 
+    - un-invisable potion
+    - coin
+- name: witch
+  description: Looks at you like your the last vital ingirident.
+  health: 15
+  damage: 6
+  drops:
+    - potion
+    - broom
+    
+    
+ - name: ghost
+  description: It wears a sheet. Hardly intimidating.
+  # damage before it goes splat
+  health: 1
+  # damage it deals on successful attack
+  damage: 1
+  drops: 
+    - rat tail
+    - coin
+- name: Ghost
+  description: If you pulled the sheet off...youd prob be more disturbed.
+  health: 15
+  damage: 4
+  drops:
+    - thigh bone
+    - leather boots
+    
+    
+    
+    
+
+- name: mad scientist
+  description: he's busy calculating his next genetic disater.
+  # damage before it goes splat
+  health: 1
+  # damage it deals on successful attack
+  damage: 1
+  drops: 
+    - rat tail
+    - coin
+- name: mad scientist
+  description: He laughs menecingly as he looks you up and down. 
+  health: 5
+  damage: 4
+  drops:
+    - flamable combustionale ingridient
+    - plastic gloves
+    
+    
+    
+    
