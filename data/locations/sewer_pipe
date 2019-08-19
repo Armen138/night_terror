@@ -1,0 +1,8 @@
+title: You managed to squeeze yourself in here?
+desciption: Its pretty cramped and you can hardly breeth. You can feel the drainage
+water flowing beneeth your body as you squigle by. Keep going though.
+name: sewer pipe
+monsters: slime
+connects:
+ - kitchen
+ - sewer
