@@ -1,0 +1,9 @@
+title: A familiar melody plays as you enter the room.
+description: The centerpice piano is placed front and center. it has een
+pre-programed or your witnessing a miricale in the making. A ghost!?
+name: 
+ - piano room
+monster:
+ - conductor
+connects:
+ - back
