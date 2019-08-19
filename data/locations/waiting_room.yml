@@ -1,0 +1,12 @@
+title: The ER waiting area is a little quiet, a little too quiet.
+description: Once you notice every seat in the ER waiting area is empty you begin to panic
+In fact, once you notice the whole hospital is empty, you start to break a sweat.
+If not for the clerks silloute frantically filling out paperwork one would think this was
+an abandoned hospital.
+name: waiting room
+items:
+ - Diagram A
+ - Diagram B
+ - Dieagram C
+ connects:
+  - hallway
