@@ -5,7 +5,7 @@ const template = `
     max-width="640"
   >
   <v-img
-  src="mobile/images/strange_room.jpg"
+  :src="locationImage(location.name)"
   class="white--text"
   height="200px"
   gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
@@ -50,6 +50,9 @@ const location = {
   methods: {
     search() {
       this.game.search();
+    },
+    locationImage(locationName) {
+      return `mobile/images/locations/${locationName.replace(/ /g, '_')}.png`;
     },
   },
   data: () => ({
