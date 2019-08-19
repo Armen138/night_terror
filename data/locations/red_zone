@@ -1,0 +1,13 @@
+name: red zone
+description: Wow. You actually explored here? You must be dedicated!!
+Who would have thought. Well...now that you are here...
+I should tell you this area is locked for now. But if you want to know
+more visit.....(https://armen138.github.io/night_terror/mobile.html
+name: 
+ - red zone
+monster:
+ - red monster
+ items;
+  - mirror
+connects:
+ - back
