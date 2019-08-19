@@ -1,12 +1,12 @@
-title: You've entered the main hall.
+title: Welcome to the grand hall.
 description: >
-  Easily the largest room in the mansion. There are various paintings
-  fancy sculptures, and old artifacts propped atop pedestals ready to be admired.
-  A rickety staircase spirals upwards.
+  There are various paintings sculptures, and fancy furnitures set up in a 
+  strange arrangments. The most beautiful and easily the most attraction piece
+  is the intricate grand staircase that spiral upwards.
 name: main hall
 connects:
   - hallway
   - dining room
   - archway
-  - ??
+  - west wing
   - upstairs
